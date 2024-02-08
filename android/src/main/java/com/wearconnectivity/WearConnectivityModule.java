@@ -1,5 +1,7 @@
 package com.wearconnectivity;
 
+import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST;
+
 import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -11,6 +13,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,11 +28,14 @@ import java.util.List;
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
   public static final String NAME = "WearConnectivity";
+  private static final String TAG = "WearConnectivityModule";
+  private final MessageClient client;
 
   WearConnectivityModule(ReactApplicationContext context) {
     super(context);
     context.addLifecycleEventListener(this);
-    Wearable.getMessageClient(context).addListener(this);
+    client = Wearable.getMessageClient(context);
+    client.addListener(this);
   }
 
   @Override
@@ -107,16 +113,18 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostResume() {
-    // implement it
+    if (client != null) {
+      client.addListener(this);
+    }
   }
 
   @Override
   public void onHostPause() {
-    // implement it
+    client.removeListener(this);
   }
 
   @Override
   public void onHostDestroy() {
-    Wearable.getMessageClient(getReactApplicationContext()).removeListener(this);
+    client.removeListener(this);
   }
 }
