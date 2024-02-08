@@ -1,9 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity, NativeEventEmitter, NativeModules } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  NativeEventEmitter,
+  NativeModules,
+} from 'react-native';
 import { multiply, sendMessage } from 'react-native-wear-connectivity';
 
 const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
+const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
+
 export default function App() {
   const [result, setResult] = useState<number | undefined>();
   const [count, setCount] = useState(0);
@@ -14,11 +23,14 @@ export default function App() {
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(
-      NativeModules.AndroidWearCommunication,
+      NativeModules.AndroidWearCommunication
     );
-    let eventListener = eventEmitter.addListener(INCREASE_WEAR_COUNTER_EVENT, () => {
-      setCount(prevCount => prevCount + 1);
-    });
+    let eventListener = eventEmitter.addListener(
+      INCREASE_WEAR_COUNTER_EVENT,
+      () => {
+        setCount((prevCount) => prevCount + 1);
+      }
+    );
 
     return () => {
       eventListener.remove();
@@ -28,6 +40,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>count is: {count}</Text>
+      <TouchableOpacity
+        onPress={() => sendMessage(INCREASE_PHONE_COUNTER_EVENT)}
+        style={styles.button}
+      />
     </View>
   );
 }

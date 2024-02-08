@@ -95,9 +95,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   public void onMessageReceived(MessageEvent messageEvent) {
     Log.w("TESTING: ", "from Phone onMessageReceived");
-    if (messageEvent.getPath().equals("increase_wear_counter")) {
-      sendEvent(getReactApplicationContext(), messageEvent.getPath(), null);
-    }
+    sendEvent(getReactApplicationContext(), messageEvent.getPath(), null);
   }
 
   private void sendEvent(
