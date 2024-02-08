@@ -10,4 +10,5 @@ abstract class WearConnectivitySpec extends ReactContextBaseJavaModule {
   }
 
   public abstract void multiply(double a, double b, Promise promise);
+  public abstract void increaseWearCounter(Promise promise);
 }
