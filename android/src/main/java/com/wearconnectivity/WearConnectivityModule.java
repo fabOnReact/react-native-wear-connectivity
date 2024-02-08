@@ -2,10 +2,11 @@ package com.wearconnectivity;
 
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST;
 
-import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -54,8 +55,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @ReactMethod
   public void sendMessage(String path, Promise promise) {
     try {
-      // add a check that it has permissions for that scope
-      // https://android-developers.googleblog.com/2017/11/moving-past-googleapiclient_21.html
       NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
       List<Node> nodes = Tasks.await(nodeClient.getConnectedNodes());
       if (nodes.size() > 0) {
@@ -68,7 +67,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
             .show();
       }
     } catch (Exception e) {
-      Log.w("TESTING", "EXCEPTION: " + e);
+      FLog.w(TAG, " getConnectedNodes raised Exception: " + e);
     }
   }
 
@@ -81,7 +80,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
           new OnSuccessListener<Object>() {
             @Override
             public void onSuccess(Object object) {
-              Log.w("TESTING: ", "from Phone onSuccess");
+              FLog.d(TAG, " sendMessage called onSuccess for path: " + path);
             }
           };
       sendTask.addOnSuccessListener(onSuccessListener);
@@ -89,17 +88,17 @@ public class WearConnectivityModule extends WearConnectivitySpec
           new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-              Log.w("TESTING: ", "from Phone onFailure with e: " + e);
+              FLog.d(TAG, " sendMessage called onFailure with error: " + e);
             }
           };
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
-      Log.w("TESTING: ", "from Phone e: " + e);
+      FLog.w(TAG, " sendMessage raised Exception: " + e);
     }
   }
 
   public void onMessageReceived(MessageEvent messageEvent) {
-    Log.w("TESTING: ", "from Phone onMessageReceived");
+    FLog.d(TAG, " onMessageReceived called for path: " + messageEvent.getPath());
     sendEvent(getReactApplicationContext(), messageEvent.getPath(), null);
   }
 
