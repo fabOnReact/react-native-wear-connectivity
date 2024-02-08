@@ -1924,16 +1924,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@evilmartians/lefthook@npm:^1.5.0":
-  version: 1.6.1
-  resolution: "@evilmartians/lefthook@npm:1.6.1"
-  bin:
-    lefthook: bin/index.js
-  checksum: 60366b94442be1bd02d5054dbabbe3c98397b7700a2a60d32c028cd762c5cf4645a4887beb6a7362146a7865afcc5c82f4bf3c57850cf19cc440c8c3b5cfbcb7
-  conditions: (os=darwin | os=linux | os=win32) & (cpu=x64 | cpu=arm64 | cpu=ia32)
-  languageName: node
-  linkType: hard
-
 "@hapi/hoek@npm:^9.0.0, @hapi/hoek@npm:^9.3.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
@@ -2807,6 +2797,20 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 5ed1ee3e97f0b184ed796ca7efa174a9593808214102391db1341a847370bdbc5c01477fbfdb07fc829f6b6a1583fd77ce405f72badf416671f95d7015283a19
+  languageName: node
+  linkType: hard
+
+"@react-native-google-signin/google-signin@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@react-native-google-signin/google-signin@npm:11.0.0"
+  peerDependencies:
+    expo: ">=47.0.0"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 58651579f2b23bc73b17510fc3d621a72d9a079778deec08aa74d421b5cfa9766ae8395b9c59dfececf61149461f369d1fedebee3635bd0e4c2a1fda7b89d3ef
   languageName: node
   linkType: hard
 
@@ -10820,6 +10824,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-config@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "react-native-config@npm:1.5.1"
+  peerDependencies:
+    react-native-windows: ">=0.61"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: ae17b750e445310573ce33798db67c9b8c50e55cb2ba136e9a9ef8372dd3f7669ce236bb18bf1fa8a426fd1aa9e6b516fb2f593767bd24688242f6847cd37712
+  languageName: node
+  linkType: hard
+
 "react-native-wear-connectivity-example@workspace:example":
   version: 0.0.0-use.local
   resolution: "react-native-wear-connectivity-example@workspace:example"
@@ -10827,6 +10843,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
+    "@react-native-google-signin/google-signin": ^11.0.0
     "@react-native/babel-preset": 0.73.21
     "@react-native/metro-config": 0.73.5
     "@react-native/typescript-config": 0.73.1
@@ -10834,6 +10851,7 @@ __metadata:
     pod-install: ^0.1.0
     react: 18.2.0
     react-native: 0.73.4
+    react-native-config: ^1.5.1
   languageName: unknown
   linkType: soft
 
@@ -10842,7 +10860,6 @@ __metadata:
   resolution: "react-native-wear-connectivity@workspace:."
   dependencies:
     "@commitlint/config-conventional": ^17.0.2
-    "@evilmartians/lefthook": ^1.5.0
     "@react-native/eslint-config": ^0.72.2
     "@release-it/conventional-changelog": ^5.0.0
     "@types/jest": ^28.1.2
