@@ -1,21 +1,25 @@
-import * as React from 'react';
-
-import { StyleSheet, View, Text } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import LoginScreen from './LoginScreen';
+import WearScreen from './WearScreen';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { multiply } from 'react-native-wear-connectivity';
 
-export default function App() {
+const App = () => {
   const [result, setResult] = React.useState<number | undefined>();
-
   React.useEffect(() => {
     multiply(3, 7).then(setResult);
   }, []);
-
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <>
+      <LoginScreen />
+      <WearScreen />
+      <View style={styles.container}>
+        <Text>Result: {result}</Text>
+      </View>
+    </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -29,3 +33,5 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+export default App;

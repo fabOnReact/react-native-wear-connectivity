@@ -27,3 +27,7 @@ const WearConnectivity = WearConnectivityModule
 export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
+
+export function increaseWearCounter(): Promise<boolean> {
+  return WearConnectivity.increaseWearCounter();
+}

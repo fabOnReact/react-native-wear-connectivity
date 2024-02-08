@@ -26,7 +26,8 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-wear-connectivity-example",
+    "example": "yarn workspace react-native-phone-connectivity-example",
+    "watch-example": "yarn workspace react-native-wear-connectivity-example",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -54,7 +55,6 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
-    "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
@@ -83,7 +83,8 @@
     "react-native": "*"
   },
   "workspaces": [
-    "example"
+    "example",
+    "watch-example"
   ],
   "packageManager": "yarn@3.6.1",
   "engines": {
