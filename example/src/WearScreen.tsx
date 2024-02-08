@@ -8,9 +8,10 @@ import {
   NativeModules,
   Button,
 } from 'react-native';
-import { multiply, increaseWearCounter } from 'react-native-wear-connectivity';
+import { multiply, sendMessage } from 'react-native-wear-connectivity';
 
-const INCREASE_COUNTER_EVENT = 'increaseCounter';
+const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
+const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
 
 export default function WearCounter() {
   const [count, setCount] = React.useState(0);
@@ -19,9 +20,12 @@ export default function WearCounter() {
     const eventEmitter = new NativeEventEmitter(
       NativeModules.AndroidWearCommunication
     );
-    let eventListener = eventEmitter.addListener(INCREASE_COUNTER_EVENT, () => {
-      setCount((prevCount) => prevCount + 1);
-    });
+    let eventListener = eventEmitter.addListener(
+      INCREASE_PHONE_COUNTER_EVENT,
+      () => {
+        setCount((prevCount) => prevCount + 1);
+      }
+    );
 
     return () => {
       eventListener.remove();
@@ -29,8 +33,7 @@ export default function WearCounter() {
   }, []);
 
   const onPressHandler = () => {
-    console.log('onPressHandler');
-    increaseWearCounter();
+    sendMessage(INCREASE_WEAR_COUNTER_EVENT);
   };
 
   return (

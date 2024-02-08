@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity, NativeEventEmitter, NativeModules } from 'react-native';
-import { multiply } from 'react-native-wear-connectivity';
+import { multiply, sendMessage } from 'react-native-wear-connectivity';
 
-const INCREASE_COUNTER_EVENT = 'increaseCounter';
+const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
 export default function App() {
   const [result, setResult] = useState<number | undefined>();
   const [count, setCount] = useState(0);
@@ -16,7 +16,7 @@ export default function App() {
     const eventEmitter = new NativeEventEmitter(
       NativeModules.AndroidWearCommunication,
     );
-    let eventListener = eventEmitter.addListener(INCREASE_COUNTER_EVENT, () => {
+    let eventListener = eventEmitter.addListener(INCREASE_WEAR_COUNTER_EVENT, () => {
       setCount(prevCount => prevCount + 1);
     });
 
