@@ -10836,9 +10836,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-wear-connectivity-example@workspace:example":
+"react-native-phone-connectivity-example@workspace:example":
   version: 0.0.0-use.local
-  resolution: "react-native-wear-connectivity-example@workspace:example"
+  resolution: "react-native-phone-connectivity-example@workspace:example"
   dependencies:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
@@ -10852,6 +10852,23 @@ __metadata:
     react: 18.2.0
     react-native: 0.73.4
     react-native-config: ^1.5.1
+  languageName: unknown
+  linkType: soft
+
+"react-native-wear-connectivity-example@workspace:watch-example":
+  version: 0.0.0-use.local
+  resolution: "react-native-wear-connectivity-example@workspace:watch-example"
+  dependencies:
+    "@babel/core": ^7.20.0
+    "@babel/preset-env": ^7.20.0
+    "@babel/runtime": ^7.20.0
+    "@react-native/babel-preset": 0.73.21
+    "@react-native/metro-config": 0.73.5
+    "@react-native/typescript-config": 0.73.1
+    babel-plugin-module-resolver: ^5.0.0
+    pod-install: ^0.1.0
+    react: 18.2.0
+    react-native: 0.73.4
   languageName: unknown
   linkType: soft
 

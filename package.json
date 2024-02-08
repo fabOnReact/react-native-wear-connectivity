@@ -26,7 +26,8 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-wear-connectivity-example",
+    "example": "yarn workspace react-native-phone-connectivity-example",
+    "watch-example": "yarn workspace react-native-wear-connectivity-example",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -82,7 +83,8 @@
     "react-native": "*"
   },
   "workspaces": [
-    "example"
+    "example",
+    "watch-example"
   ],
   "packageManager": "yarn@3.6.1",
   "engines": {
