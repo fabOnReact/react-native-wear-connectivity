@@ -4,11 +4,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -92,11 +96,14 @@ public class WearConnectivityModule extends WearConnectivitySpec implements Mess
 
   public void onMessageReceived(MessageEvent messageEvent) {
     Log.w("TESTING: ", "from Phone onMessageReceived");
-    /*
-    if (messageEvent.getPath().equals("/increase_phone_counter")) {
+    if (messageEvent.getPath().equals("/increase_wear_counter")) {
       sendEvent(getReactApplicationContext(), "increaseCounter", null);
     }
-     */
+  }
+
+  private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
+    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
   }
 
   @Override
