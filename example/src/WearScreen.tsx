@@ -23,7 +23,7 @@ export default function WearCounter() {
     let eventListener = eventEmitter.addListener(
       INCREASE_PHONE_COUNTER_EVENT,
       (event) => {
-        console.log('event' ,event)
+        console.log('event.text', event.text);
         setCount((prevCount) => prevCount + 1);
       }
     );
@@ -34,10 +34,11 @@ export default function WearCounter() {
   }, []);
 
   const onPressHandler = async () => {
-    const result = await sendMessage({
+    const json = {
       text: 'hello',
       event: INCREASE_WEAR_COUNTER_EVENT,
-    });
+    };
+    const result = await sendMessage(json);
     console.log(result);
   };
 
