@@ -37,13 +37,15 @@ export default function App() {
     };
   }, []);
 
+  const sendMessageToPhone = async () => {
+    const result = await sendMessage(INCREASE_PHONE_COUNTER_EVENT);
+    console.log(result);
+  };
+
   return (
     <View style={styles.container}>
       <Text>count is: {count}</Text>
-      <TouchableOpacity
-        onPress={() => sendMessage(INCREASE_PHONE_COUNTER_EVENT)}
-        style={styles.button}
-      />
+      <TouchableOpacity onPress={sendMessageToPhone} style={styles.button} />
     </View>
   );
 }
