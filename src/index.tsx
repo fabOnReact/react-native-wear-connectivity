@@ -28,6 +28,6 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
-export function sendMessage(path: string): Promise<boolean> {
-  return WearConnectivity.sendMessage(path);
+export function sendMessage(messageObject: {}): Promise<string> {
+  return WearConnectivity.sendMessage(messageObject);
 }

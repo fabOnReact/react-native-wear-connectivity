@@ -3,11 +3,15 @@ package com.wearconnectivity;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,6 +23,10 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class WearConnectivityModule extends WearConnectivitySpec
@@ -64,12 +72,12 @@ public class WearConnectivityModule extends WearConnectivitySpec
   }
 
   @ReactMethod
-  public void sendMessage(String path, Promise promise) {
+  public void sendMessage(ReadableMap messageData, Promise promise) {
     List<Node> connectedNodes = retrieveNodes(promise);
     if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
-          sendMessageToClient(path, connectedNode, promise);
+          sendMessageToClient(messageData, connectedNode, promise);
         }
       }
     } else {
@@ -83,10 +91,12 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
-  private void sendMessageToClient(String path, Node node, Promise promise) {
+  private void sendMessageToClient(ReadableMap messageData, Node node, Promise promise) {
     try {
       // the last parameter is for file transfer (for ex. audio)
-      Task<Integer> sendTask = client.sendMessage(node.getId(), path, null);
+      Log.d(TAG, TAG + "messageData.toString(): " + messageData.toString());
+      JSONObject messageJSON = new JSONObject(messageData.toHashMap());
+      Task<Integer> sendTask = client.sendMessage(node.getId(), messageJSON.toString(), null);
       OnSuccessListener<Object> onSuccessListener =
           object ->
               promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
@@ -101,8 +111,16 @@ public class WearConnectivityModule extends WearConnectivitySpec
   }
 
   public void onMessageReceived(MessageEvent messageEvent) {
-    Log.d(TAG, TAG + "onMessageReceived received message with path: " + messageEvent.getPath());
-    sendEvent(getReactApplicationContext(), messageEvent.getPath(), null);
+    try {
+      JSONObject jsonObject = new JSONObject(messageEvent.getPath());
+      ReadableMap messageAsReadableMap = JSONArguments.fromJSONObject(jsonObject);
+      String event = jsonObject.getString("event");
+      Log.d(TAG, TAG + "onMessageReceived received message with path: " + messageEvent.getPath() + " and event: " + event);
+      sendEvent(getReactApplicationContext(), event, null);
+    } catch (JSONException e) {
+      FLog.w(TAG, TAG + "onMessageReceived with message: "
+              + messageEvent.getPath() + " failed with error: " + e);
+    }
   }
 
   private void sendEvent(

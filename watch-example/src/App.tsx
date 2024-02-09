@@ -38,7 +38,8 @@ export default function App() {
   }, []);
 
   const sendMessageToPhone = async () => {
-    const result = await sendMessage(INCREASE_PHONE_COUNTER_EVENT);
+    const json = { text: 'hello', event: INCREASE_PHONE_COUNTER_EVENT };
+    const result = await sendMessage(json);
     console.log(result);
   };
 
