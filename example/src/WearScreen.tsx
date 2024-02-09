@@ -32,8 +32,9 @@ export default function WearCounter() {
     };
   }, []);
 
-  const onPressHandler = () => {
-    sendMessage(INCREASE_WEAR_COUNTER_EVENT);
+  const onPressHandler = async () => {
+    const result = await sendMessage(INCREASE_WEAR_COUNTER_EVENT);
+    console.log(result);
   };
 
   return (
