@@ -29,21 +29,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "WearConnectivityModule ";
   private final MessageClient client;
+  private String CLIENT_ADDED = TAG
+          + "onMessageReceived listener added when activity is created. Client receives messages.";
+  private String SEND_MESSAGE_FAILED = TAG + "sendMessage failed with exception: ";
+  private String NO_NODES_FOUND = TAG + "sendMessage failed. No connected nodes found.";
+  private String REMOVE_CLIENT = TAG
+          + "onMessageReceived listener removed when activity is destroyed. Client does not receive messages.";
+  private String ADD_CLIENT = TAG
+          + "onMessageReceived listener added when activity is resumed. Client receives messages.";
 
   WearConnectivityModule(ReactApplicationContext context) {
     super(context);
     context.addLifecycleEventListener(this);
     client = Wearable.getMessageClient(context);
-    Log.d(
-        TAG,
-        TAG
-            + "onMessageReceived listener added when activity is created. Client receives messages.");
+    Log.d(TAG, CLIENT_ADDED);
     client.addListener(this);
   }
 
@@ -67,7 +73,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
       // https://stackoverflow.com/a/64969640/7295772
       return Tasks.await(nodeClient.getConnectedNodes());
     } catch (Exception e) {
-      promise.reject(TAG, TAG + "sendMessage failed with exception: " + e);
+      promise.reject(TAG, SEND_MESSAGE_FAILED + e);
       return null;
     }
   }
@@ -83,27 +89,22 @@ public class WearConnectivityModule extends WearConnectivitySpec
       }
     } else {
       promise.reject(
-          TAG,
-          TAG
-              + "sendMessage failed. No connected nodes found. client: "
-              + client
-              + " connectedNodes: "
-              + connectedNodes);
+          TAG, NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
     }
   }
 
   private void sendMessageToClient(ReadableMap messageData, Node node, Promise promise) {
+    OnSuccessListener<Object> onSuccessListener =
+            object ->
+                    promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
+    OnFailureListener onFailureListener =
+            object ->
+                    promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
     try {
       // the last parameter is for file transfer (for ex. audio)
       Log.d(TAG, TAG + "messageData.toString(): " + messageData.toString());
       JSONObject messageJSON = new JSONObject(messageData.toHashMap());
       Task<Integer> sendTask = client.sendMessage(node.getId(), messageJSON.toString(), null);
-      OnSuccessListener<Object> onSuccessListener =
-          object ->
-              promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
-      OnFailureListener onFailureListener =
-          object ->
-              promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
       sendTask.addOnSuccessListener(onSuccessListener);
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
@@ -133,29 +134,20 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @Override
   public void onHostResume() {
     if (client != null) {
-      Log.d(
-          TAG,
-          TAG
-              + "onMessageReceived listener added when activity is resumed. Client receives messages.");
+      Log.d(TAG, ADD_CLIENT);
       client.addListener(this);
     }
   }
 
   @Override
   public void onHostPause() {
-    Log.d(
-        TAG,
-        TAG
-            + "onMessageReceived listener removed when the activity paused. Client does not receive messages.");
+    Log.d(TAG, REMOVE_CLIENT);
     client.removeListener(this);
   }
 
   @Override
   public void onHostDestroy() {
-    Log.d(
-        TAG,
-        TAG
-            + "onMessageReceived listener removed when activity is destroyed. Client does not receive messages.");
+    Log.d(TAG, REMOVE_CLIENT);
     client.removeListener(this);
   }
 }
