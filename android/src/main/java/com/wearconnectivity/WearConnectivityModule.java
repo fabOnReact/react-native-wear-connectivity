@@ -2,6 +2,7 @@ package com.wearconnectivity;
 
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST;
 
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.util.RNLog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +37,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
     super(context);
     context.addLifecycleEventListener(this);
     client = Wearable.getMessageClient(context);
+    Log.d(TAG, TAG + "onMessageReceived listener added when activity is created. Client receives messages.");
     client.addListener(this);
   }
 
@@ -58,7 +61,11 @@ public class WearConnectivityModule extends WearConnectivitySpec
       List<Node> nodes = Tasks.await(nodeClient.getConnectedNodes());
       if (nodes.size() > 0) {
         for (Node node : nodes) {
-          sendMessageToClient(path, node, promise);
+          // TODO: Add check that node is listening (companion app activity is used)
+          // https://developers.google.com/android/reference/com/google/android/gms/wearable/Node
+          if (node.isNearby()) {
+            sendMessageToClient(path, node, promise);
+          }
         }
       } else {
         promise.reject(TAG, TAG + "sendMessage failed. No connected nodes found.");
@@ -95,7 +102,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
   }
 
   public void onMessageReceived(MessageEvent messageEvent) {
-    FLog.d(TAG, " onMessageReceived called for path: " + messageEvent.getPath());
+    Log.d(TAG, TAG + "onMessageReceived received message with path: " + messageEvent.getPath());
     sendEvent(getReactApplicationContext(), messageEvent.getPath(), null);
   }
 
@@ -109,17 +116,20 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @Override
   public void onHostResume() {
     if (client != null) {
+      Log.d(TAG, TAG + "onMessageReceived listener added when activity is resumed. Client receives messages.");
       client.addListener(this);
     }
   }
 
   @Override
   public void onHostPause() {
+    Log.d(TAG, TAG + "onMessageReceived listener removed when the activity paused. Client does not receive messages.");
     client.removeListener(this);
   }
 
   @Override
   public void onHostDestroy() {
+    Log.d(TAG, TAG + "onMessageReceived listener removed when activity is destroyed. Client does not receive messages.");
     client.removeListener(this);
   }
 }
