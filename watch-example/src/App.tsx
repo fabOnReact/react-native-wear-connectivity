@@ -27,7 +27,8 @@ export default function App() {
     );
     let eventListener = eventEmitter.addListener(
       INCREASE_WEAR_COUNTER_EVENT,
-      () => {
+      (event) => {
+        console.log('event', event);
         setCount((prevCount) => prevCount + 1);
       }
     );

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -113,10 +114,9 @@ public class WearConnectivityModule extends WearConnectivitySpec
   public void onMessageReceived(MessageEvent messageEvent) {
     try {
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
-      ReadableMap messageAsReadableMap = JSONArguments.fromJSONObject(jsonObject);
+      WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
-      Log.d(TAG, TAG + "onMessageReceived received message with path: " + messageEvent.getPath() + " and event: " + event);
-      sendEvent(getReactApplicationContext(), event, null);
+      sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
     } catch (JSONException e) {
       FLog.w(TAG, TAG + "onMessageReceived with message: "
               + messageEvent.getPath() + " failed with error: " + e);
