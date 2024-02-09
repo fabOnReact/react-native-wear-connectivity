@@ -28,7 +28,7 @@ import java.util.List;
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
   public static final String NAME = "WearConnectivity";
-  private static final String TAG = "WearConnectivityModule";
+  private static final String TAG = "WearConnectivityModule ";
   private final MessageClient client;
 
   WearConnectivityModule(ReactApplicationContext context) {
@@ -51,7 +51,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     promise.resolve(a * b);
   }
 
-  // catch the ExecutionException
   @ReactMethod
   public void sendMessage(String path, Promise promise) {
     try {
@@ -59,19 +58,17 @@ public class WearConnectivityModule extends WearConnectivitySpec
       List<Node> nodes = Tasks.await(nodeClient.getConnectedNodes());
       if (nodes.size() > 0) {
         for (Node node : nodes) {
-          sendMessageToClient(path, node);
+          sendMessageToClient(path, node, promise);
         }
-        promise.resolve(true);
       } else {
-        Toast.makeText(getReactApplicationContext(), "No connected nodes found", Toast.LENGTH_LONG)
-            .show();
+        promise.reject(TAG, TAG + "sendMessage failed. No connected nodes found.");
       }
     } catch (Exception e) {
-      FLog.w(TAG, " getConnectedNodes raised Exception: " + e);
+      promise.reject(TAG, TAG + "sendMessage failed with exception: " + e);
     }
   }
 
-  private void sendMessageToClient(String path, Node node) {
+  private void sendMessageToClient(String path, Node node, Promise promise) {
     try {
       Task<Integer> sendTask =
           Wearable.getMessageClient(getReactApplicationContext())
@@ -80,7 +77,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
           new OnSuccessListener<Object>() {
             @Override
             public void onSuccess(Object object) {
-              FLog.d(TAG, " sendMessage called onSuccess for path: " + path);
+              promise.resolve(TAG + "message sent to client with nodeID: " + object.toString());
             }
           };
       sendTask.addOnSuccessListener(onSuccessListener);
@@ -88,12 +85,12 @@ public class WearConnectivityModule extends WearConnectivitySpec
           new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-              FLog.d(TAG, " sendMessage called onFailure with error: " + e);
+              promise.reject(TAG, TAG + "sendMessage failed: " + e);
             }
           };
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
-      FLog.w(TAG, " sendMessage raised Exception: " + e);
+      promise.reject(TAG, TAG + "sendMessage failed: " + e);
     }
   }
 

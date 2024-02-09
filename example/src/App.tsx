@@ -14,9 +14,6 @@ const App = () => {
     <>
       <LoginScreen />
       <WearScreen />
-      <View style={styles.container}>
-        <Text>Result: {result}</Text>
-      </View>
     </>
   );
 };

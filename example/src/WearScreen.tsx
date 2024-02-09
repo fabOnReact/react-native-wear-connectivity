@@ -33,7 +33,9 @@ export default function WearCounter() {
   }, []);
 
   const onPressHandler = () => {
-    sendMessage(INCREASE_WEAR_COUNTER_EVENT);
+    const onFulfilled = (value) => console.log('sendMessage succed with value: ', value);
+    const onRejected = (error) => console.log('sendMessage failed with error: ', error);
+    sendMessage(INCREASE_WEAR_COUNTER_EVENT).then(onFulfilled, onRejected);
   };
 
   return (

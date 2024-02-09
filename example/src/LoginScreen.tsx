@@ -7,7 +7,7 @@ import {
   NativeModules,
   Button,
 } from 'react-native';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 
 export default function LoginScreen() {
@@ -19,7 +19,7 @@ export default function LoginScreen() {
       const userInfo = await GoogleSignin.signIn();
       console.log(JSON.stringify(userInfo));
     } catch (error) {
-      console.log('ERROR IS: ' + JSON.stringify(error));
+      console.log('GoogleSignin faile with error: ' + JSON.stringify(error));
     }
   };
 
