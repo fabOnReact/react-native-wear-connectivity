@@ -13,7 +13,7 @@ import { multiply, sendMessage } from 'react-native-wear-connectivity';
 const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
 const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
 
-export default function WearCounter() {
+function WearCounter(): React.FC {
   const [count, setCount] = React.useState(0);
 
   useEffect(() => {
@@ -65,3 +65,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default WearCounter;
