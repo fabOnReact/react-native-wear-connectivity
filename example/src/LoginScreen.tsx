@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  NativeModules,
-  Button,
-} from 'react-native';
+import { View, Button } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 

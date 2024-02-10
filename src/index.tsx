@@ -1,4 +1,6 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
+import { watchEvents } from './subscriptions';
+import { sendMessage } from './messages';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -28,6 +30,4 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
-export function sendMessage(path: string): Promise<boolean> {
-  return WearConnectivity.sendMessage(path);
-}
+export { sendMessage, watchEvents, WearConnectivity };

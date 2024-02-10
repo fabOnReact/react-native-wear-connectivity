@@ -3330,6 +3330,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-native@npm:^0.73.0":
+  version: 0.73.0
+  resolution: "@types/react-native@npm:0.73.0"
+  dependencies:
+    react-native: "*"
+  checksum: a764ca5d876dae3c109da449f736c44271b3b236d0d6e836c078247af1419f6d851600c56bb0c26f3e0d1b4be6eaac56b65c1f74ad0f0d05baf8b65dd1d5c597
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:17.0.21":
   version: 17.0.21
   resolution: "@types/react@npm:17.0.21"
@@ -10847,6 +10856,7 @@ __metadata:
     "@react-native/babel-preset": 0.73.21
     "@react-native/metro-config": 0.73.5
     "@react-native/typescript-config": 0.73.1
+    "@types/react-native": ^0.73.0
     babel-plugin-module-resolver: ^5.0.0
     pod-install: ^0.1.0
     react: 18.2.0
@@ -10902,7 +10912,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native@npm:0.73.4":
+"react-native@npm:*, react-native@npm:0.73.4":
   version: 0.73.4
   resolution: "react-native@npm:0.73.4"
   dependencies:

@@ -1,39 +1,27 @@
 import React, { useEffect } from 'react';
-import {
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  View,
-  StyleSheet,
-  Text,
-  NativeModules,
-  Button,
-} from 'react-native';
-import { multiply, sendMessage } from 'react-native-wear-connectivity';
+import { View, StyleSheet, Text, Button } from 'react-native';
+import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 
-const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
-const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
-
-export default function WearCounter() {
+function WearCounter() {
   const [count, setCount] = React.useState(0);
 
   useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.AndroidWearCommunication
-    );
-    let eventListener = eventEmitter.addListener(
-      INCREASE_PHONE_COUNTER_EVENT,
-      () => {
-        setCount((prevCount) => prevCount + 1);
-      }
-    );
+    const unsubscribe = watchEvents.on('message', (message: Function) => {
+      console.log('received message from watch', message);
+      setCount((prevCount) => prevCount + 1);
+    });
 
     return () => {
-      eventListener.remove();
+      unsubscribe();
     };
   }, []);
 
   const onPressHandler = async () => {
-    const result = await sendMessage(INCREASE_WEAR_COUNTER_EVENT);
+    const json = {
+      text: 'hello',
+      event: 'message',
+    };
+    const result = await sendMessage(json);
     console.log(result);
   };
 
@@ -60,3 +48,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default WearCounter;
