@@ -33,10 +33,10 @@ export default function App() {
     };
   }, []);
 
-  const sendMessageToPhone = async () => {
+  const sendMessageToPhone = () => {
     const json = { text: 'hello', event: 'message' };
-    const result = await sendMessage(json);
-    console.log(result);
+    console.log('json', json);
+    sendMessage(json);
   };
 
   return (
