@@ -1,24 +1,12 @@
 import React, { useEffect } from 'react';
-import {
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  View,
-  StyleSheet,
-  Text,
-  NativeModules,
-  Button,
-} from 'react-native';
-import {
-  multiply,
-  sendMessage,
-  watchEvents,
-} from 'react-native-wear-connectivity';
+import { View, StyleSheet, Text, Button } from 'react-native';
+import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 
-function WearCounter(): React.FC {
+function WearCounter() {
   const [count, setCount] = React.useState(0);
 
   useEffect(() => {
-    const unsubscribe = watchEvents.on('message', (message, reply) => {
+    const unsubscribe = watchEvents.on('message', (message: Function) => {
       console.log('received message from watch', message);
       setCount((prevCount) => prevCount + 1);
     });
