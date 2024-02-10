@@ -14,9 +14,6 @@ import {
   watchEvents,
 } from 'react-native-wear-connectivity';
 
-const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
-const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
-
 export default function App() {
   const [result, setResult] = useState<number | undefined>();
   const [count, setCount] = useState(0);
@@ -37,7 +34,7 @@ export default function App() {
   }, []);
 
   const sendMessageToPhone = async () => {
-    const json = { text: 'hello', event: INCREASE_PHONE_COUNTER_EVENT };
+    const json = { text: 'hello', event: 'message' };
     const result = await sendMessage(json);
     console.log(result);
   };

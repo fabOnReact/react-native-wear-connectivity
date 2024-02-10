@@ -1,7 +1,6 @@
 import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
-import type { SendMessage } from './NativeWearConnectivity';
-import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
 import { watchEvents } from './subscriptions';
+import { sendMessage } from './messages';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -27,18 +26,8 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-const sendMessage: SendMessage = (message, cb, errCb) => {
-  const callbackWithDefault = cb ?? defaultReplyCb;
-  const errCbWithDefault = errCb ?? defaultErrCb;
-  return WearConnectivity.sendMessage(
-    message,
-    callbackWithDefault,
-    errCbWithDefault
-  );
-};
-
-export { sendMessage, watchEvents };
-
 export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
+
+export { sendMessage, watchEvents, WearConnectivity };

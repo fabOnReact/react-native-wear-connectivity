@@ -27,24 +27,6 @@ export type SendMessage = (
   errCb: ErrorCallback
 ) => void;
 
-// Subscriptions
-export type AddListener = (
-  event: EventType,
-  cb: WatchEventCallback<MessageFromWatch, ReplyMessage>['message']
-) => UnsubscribeFn;
-
-interface WatchEventCallbacks<P extends Payload, P2 extends Payload> {
-  message: WatchMessageCallback<P, P2>;
-}
-
-export type Listen = (
-  event: E,
-  cb: any,
-  listener?: AddListenerFn
-) => UnsubscribeFn;
-
-export type AddListenerFn = typeof _addListener;
-
 export interface Spec extends TurboModule {
   multiply(a: number, b: number): Promise<number>;
   sendMessage: SendMessage;
