@@ -1,4 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
+import type { SendMessageType } from './NativeWearConnectivity';
+import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -28,6 +30,58 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
-export function sendMessage(messageObject: {}): Promise<string> {
-  return WearConnectivity.sendMessage(messageObject);
+const sendMessage: SendMessageType = (message, cb, errCb) => {
+  const callbackWithDefault = cb ?? defaultReplyCb;
+  const errCbWithDefault = errCb ?? defaultErrCb;
+  return WearConnectivity.sendMessage(
+    message,
+    callbackWithDefault,
+    errCbWithDefault
+  );
+};
+
+/*
+export function sendMessage<
+  MessageFromWatch extends WatchPayload = WatchPayload,
+  MessageToWatch extends WatchPayload = WatchPayload
+>(
+  message: MessageToWatch,
+  replyCb?: SendMessageReplyCallback<MessageFromWatch>,
+  errCb?: SendMessageErrorCallback,
+) {
+  NativeModule.sendMessage<MessageToWatch, MessageFromWatch>(
+    message,
+    replyCb ||
+      ((reply: MessageFromWatch) => {
+        console.warn('Unhandled watch reply', reply);
+      }),
+    errCb ||
+      ((err) => {
+        console.warn('Unhandled sendMessage error', err);
+      }),
+  );
 }
+
+function _addListener<E extends WatchEvent, Payload = EventPayloads[E]>(
+  event: E,
+  cb: (payload: Payload) => void
+) {
+  // Type the event name
+  if (!event) {
+    throw new Error('Must pass event');
+  }
+
+  const sub = nativeWatchEventEmitter.addListener(event, cb);
+  return () => sub.remove();
+}
+
+// https://github.com/mtford90/react-native-watch-connectivity/blob/89e1b53dcfe443791fabb4ca08a1c6149a238e13/lib/events/index.ts#L320
+
+const watchEvents = {
+  addListener,
+  on: addListener,
+  once,
+};
+  */
+
+export { sendMessage };
