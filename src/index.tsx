@@ -1,6 +1,7 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
 import type { SendMessage } from './NativeWearConnectivity';
 import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
+import { watchEvents } from './subscriptions';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -26,10 +27,6 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return WearConnectivity.multiply(a, b);
-}
-
 const sendMessage: SendMessage = (message, cb, errCb) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
   const errCbWithDefault = errCb ?? defaultErrCb;
@@ -40,48 +37,8 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
   );
 };
 
-/*
-export function sendMessage<
-  MessageFromWatch extends WatchPayload = WatchPayload,
-  MessageToWatch extends WatchPayload = WatchPayload
->(
-  message: MessageToWatch,
-  replyCb?: SendMessageReplyCallback<MessageFromWatch>,
-  errCb?: SendMessageErrorCallback,
-) {
-  NativeModule.sendMessage<MessageToWatch, MessageFromWatch>(
-    message,
-    replyCb ||
-      ((reply: MessageFromWatch) => {
-        console.warn('Unhandled watch reply', reply);
-      }),
-    errCb ||
-      ((err) => {
-        console.warn('Unhandled sendMessage error', err);
-      }),
-  );
-}
-
-function _addListener<E extends WatchEvent, Payload = EventPayloads[E]>(
-  event: E,
-  cb: (payload: Payload) => void
-) {
-  // Type the event name
-  if (!event) {
-    throw new Error('Must pass event');
-  }
-
-  const sub = nativeWatchEventEmitter.addListener(event, cb);
-  return () => sub.remove();
-}
-
-// https://github.com/mtford90/react-native-watch-connectivity/blob/89e1b53dcfe443791fabb4ca08a1c6149a238e13/lib/events/index.ts#L320
-
-const watchEvents = {
-  addListener,
-  on: addListener,
-  once,
-};
-  */
-
 export { sendMessage };
+
+export function multiply(a: number, b: number): Promise<number> {
+  return WearConnectivity.multiply(a, b);
+}
