@@ -37,7 +37,7 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
   );
 };
 
-export { sendMessage };
+export { sendMessage, watchEvents };
 
 export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);

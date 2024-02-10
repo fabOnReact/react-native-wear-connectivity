@@ -11,7 +11,7 @@ import {
 import { multiply, sendMessage } from 'react-native-wear-connectivity';
 
 const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
-const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
+const INCREASE_WEAR_COUNTER_EVENT = 'message';
 
 function WearCounter(): React.FC {
   const [count, setCount] = React.useState(0);

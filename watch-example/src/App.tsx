@@ -8,7 +8,11 @@ import {
   NativeEventEmitter,
   NativeModules,
 } from 'react-native';
-import { multiply, sendMessage } from 'react-native-wear-connectivity';
+import {
+  multiply,
+  sendMessage,
+  watchEvents,
+} from 'react-native-wear-connectivity';
 
 const INCREASE_WEAR_COUNTER_EVENT = 'increase_wear_counter';
 const INCREASE_PHONE_COUNTER_EVENT = 'increase_phone_counter';
@@ -22,19 +26,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.AndroidWearCommunication
-    );
-    let eventListener = eventEmitter.addListener(
-      INCREASE_WEAR_COUNTER_EVENT,
-      (event) => {
-        console.log('event', event);
-        setCount((prevCount) => prevCount + 1);
-      }
-    );
+    const unsubscribe = watchEvents.on('message', (message, reply) => {
+      console.log('received message from watch', message);
+      setCount((prevCount) => prevCount + 1);
+    });
 
     return () => {
-      eventListener.remove();
+      unsubscribe();
     };
   }, []);
 

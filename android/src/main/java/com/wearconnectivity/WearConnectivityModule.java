@@ -112,6 +112,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
+      FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
       sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
     } catch (JSONException e) {
       FLog.w(
