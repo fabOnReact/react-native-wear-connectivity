@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import type { SendMessageType } from './NativeWearConnectivity';
+import type { SendMessage } from './NativeWearConnectivity';
 import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
 
 const LINKING_ERROR =
@@ -30,7 +30,7 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
-const sendMessage: SendMessageType = (message, cb, errCb) => {
+const sendMessage: SendMessage = (message, cb, errCb) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
   const errCbWithDefault = errCb ?? defaultErrCb;
   return WearConnectivity.sendMessage(
