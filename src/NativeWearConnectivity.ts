@@ -1,11 +1,10 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
-import { _addListener } from './index';
 
 // Messages
-type Payload = Record<string, unknown>;
-type ReplyCallback = (reply: Payload) => void;
-type ErrorCallback = (err: Error) => void;
+export type Payload = Record<string, unknown>;
+export type ReplyCallback = (reply: Payload) => void;
+export type ErrorCallback = (err: Error) => void;
 
 const UNHANDLED_CALLBACK =
   'The sendMessage function was called without a callback function. ';
