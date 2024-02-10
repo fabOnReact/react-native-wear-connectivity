@@ -24,7 +24,6 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = watchEvents.on('message', (message, reply) => {
-      console.log('received message from watch', message);
       setCount((prevCount) => prevCount + 1);
     });
 
