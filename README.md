@@ -38,9 +38,7 @@ function CounterScreen() {
   }, []);
 
   // send a message from/to wearOS
-  const onSuccess = (result) => {
-    console.log(result);
-  };
+  const onSuccess = (result) => console.log(result);
   const onError = (error) => console.log(error);
 
   const sendMessageToWear = () => {
@@ -59,23 +57,25 @@ function CounterScreen() {
 
 ## How to create WearOS app using react-native
 
-Make a copy of your react-native project.
+Make a copy of your react-native project. For Example:
 
 ```bash
 cp my-react-native-project my-react-native-wear-project
 ```
 
-Add the following line to your `android/app/src/main/AndoridManifest.xml`
+Add the following line to your new project AndroidManifest `my-react-native-wear-project/android/app/src/main/AndoridManifest.xml`
 
 ```xml
 <uses-feature android:name="android.hardware.type.watch" />
 ```
 
-- Pair the android emulator with the wearos emulator (instructions [here][21]). I suggest using the emulator `WearOS Large round`.
-- Start metro server on port 8082
+- Pair the android emulator with the wearos emulator (instructions [here][21]). I suggest using the emulator `WearOS Large round`, as the other emulator have issues with react-native dev menu.
+- Start metro server on port 8082 with `yarn start --port=8082`
 - Open the `react native dev menu` and change the bundle location to `your-ip:8081` (for ex. `192.168.18.2:8082`).
 - Repeat same steps for Android Phone Emulator and use a different port.
 - **Important Note**: Before publishing to GooglePlay, make sure that both apps are signed using the same key (instructions [here][20])
+
+You can now build the app from the root directory with `yarn android`. JS fastrefresh and the other metro functionalities work without problem (no need to build for js changes).
 
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
