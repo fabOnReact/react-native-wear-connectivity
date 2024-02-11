@@ -1,8 +1,8 @@
 # react-native-wear-connectivity
 
-Create a [wearOS][1] app using react-native and connect it to your react-native phone android app.
-
-Both apps are writter in react-native.
+- Create a [wearOS][1] app using react-native
+- Connect two react-native apps (wearOS and android phone)
+- **Both apps are writter in react-native**
 
 [1]: https://wearos.google.com
 
