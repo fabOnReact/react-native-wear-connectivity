@@ -27,10 +27,6 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return WearConnectivity.multiply(a, b);
-}
-
 let sendMessageExport;
 let watchEventsExport;
 // let WearConnectivity;

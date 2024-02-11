@@ -1,6 +1,5 @@
 package com.wearconnectivity;
 
-import com.wearconnectivity.WearConnectivitySpec;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,7 +7,6 @@ import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
@@ -35,13 +33,13 @@ public class WearConnectivityModule extends WearConnectivitySpec
   private final MessageClient client;
   private String CLIENT_ADDED =
       TAG + "onMessageReceived listener added when activity is created. Client receives messages.";
-  private String SEND_MESSAGE_FAILED = TAG + "sendMessage failed with exception: ";
   private String NO_NODES_FOUND = TAG + "sendMessage failed. No connected nodes found.";
   private String REMOVE_CLIENT =
       TAG
           + "onMessageReceived listener removed when activity is destroyed. Client does not receive messages.";
   private String ADD_CLIENT =
       TAG + "onMessageReceived listener added when activity is resumed. Client receives messages.";
+  private String RETRIEVE_NODES_FAILED = TAG + "failed to retrieve nodes with error: ";
 
   WearConnectivityModule(ReactApplicationContext context) {
     super(context);
@@ -57,13 +55,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     return NAME;
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  @ReactMethod
-  public void multiply(double a, double b, Promise promise) {
-    promise.resolve(a * b);
-  }
-
   private List<Node> retrieveNodes(Callback errorCb) {
     try {
       NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
@@ -71,7 +62,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
       // https://stackoverflow.com/a/64969640/7295772
       return Tasks.await(nodeClient.getConnectedNodes());
     } catch (Exception e) {
-      errorCb.invoke(SEND_MESSAGE_FAILED + e);
+      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
       return null;
     }
   }
@@ -86,7 +77,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
         }
       }
     } else {
-      errorCb.invoke(NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
+      FLog.w(TAG, NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
     }
   }
 

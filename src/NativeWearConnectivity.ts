@@ -2,9 +2,9 @@ import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
 // Messages
-export type Payload = Record<string, unknown>;
+export type Payload = Object;
 export type ReplyCallback = (reply: Payload) => void;
-export type ErrorCallback = (err: Error) => void;
+export type ErrorCallback = (err: string) => void;
 
 const UNHANDLED_CALLBACK =
   'The sendMessage function was called without a callback function. ';
@@ -16,7 +16,7 @@ const UNHANDLED_CALLBACK_ERROR =
 export const defaultReplyCb = (reply: Payload) => {
   console.log(UNHANDLED_CALLBACK + UNHANDLED_CALLBACK_REPLY, reply);
 };
-export const defaultErrCb = (err: Error) => {
+export const defaultErrCb = (err: string) => {
   console.warn(UNHANDLED_CALLBACK + UNHANDLED_CALLBACK_ERROR, err);
 };
 
@@ -27,7 +27,6 @@ export type SendMessage = (
 ) => void;
 
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): Promise<number>;
   sendMessage: SendMessage;
 }
 
