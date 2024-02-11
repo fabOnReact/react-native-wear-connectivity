@@ -27,7 +27,6 @@ export type SendMessage = (
 ) => void;
 
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): Promise<number>;
   sendMessage: SendMessage;
 }
 
