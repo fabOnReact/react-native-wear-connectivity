@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import { sendMessage, watchEvents } from '../../../src/index';
+import type { ReplyCallback, ErrorCallback } from '../../../src/index';
 
 function CounterScreen() {
+  const [disabled, setDisabled] = React.useState(false);
   const [count, setCount] = React.useState(0);
 
   useEffect(() => {
     const unsubscribe = watchEvents.on('message', (message: Function) => {
-      console.log('received message from watch', message);
       setCount((prevCount) => prevCount + 1);
     });
 
@@ -16,19 +17,26 @@ function CounterScreen() {
     };
   }, []);
 
-  const onPressHandler = async () => {
-    const json = {
-      text: 'hello',
-      event: 'message',
-    };
-    const result = await sendMessage(json);
+  const onSuccess: ReplyCallback = (result) => {
+    setDisabled(false);
     console.log(result);
+  };
+  const onError: ErrorCallback = (error) => console.log(error);
+
+  const sendMessageToWear = () => {
+    setDisabled(true);
+    const json = { text: 'hello', event: 'message' };
+    sendMessage(json, onSuccess, onError);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.counter}>{count}</Text>
-      <Button title="increase counter" onPress={onPressHandler} />
+      <Button
+        disabled={disabled}
+        title="increase counter"
+        onPress={sendMessageToWear}
+      />
     </View>
   );
 }

@@ -6,7 +6,7 @@ import { default as CounterScreenIos } from './CounterScreen/index.ios';
 
 const App = () => {
   const CounterScreen =
-    Platform.OS === 'ios' ? CounterScreenIos : CounterScreenAndroid;
+    Platform.OS == 'ios' ? CounterScreenIos : CounterScreenAndroid;
   return (
     <>
       <LoginScreen />

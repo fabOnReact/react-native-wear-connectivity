@@ -1,10 +1,31 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, Button } from 'react-native';
+import { sendMessage, watchEvents } from '../../../src/index';
+import type { ReplyCallback, ErrorCallback } from '../../../src/index';
 
 function CounterScreen() {
+  useEffect(() => {
+    const unsubscribe = watchEvents.on('message', () => {
+      console.log('do nothing');
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const onSuccess: ReplyCallback = (result) => console.log(result);
+  const onError: ErrorCallback = (error) => console.log(error);
+
+  const sendMessageToWear = () => {
+    const json = { text: 'hello', event: 'message' };
+    sendMessage(json, onSuccess, onError);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.counter}>We don't support iOS</Text>
+      <Button title="Send Message" onPress={sendMessageToWear} />
+      <Text style={styles.text}>We don't support iOS</Text>
     </View>
   );
 }
@@ -16,11 +37,11 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'yellow',
   },
-  counter: {
+  text: {
     height: 100,
     width: 400,
     textAlign: 'center',
-    fontSize: 50,
+    fontSize: 25,
     fontWeight: 'bold',
   },
 });

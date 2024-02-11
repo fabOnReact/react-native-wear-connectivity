@@ -31,10 +31,30 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
+let sendMessageExport;
+let watchEventsExport;
+// let WearConnectivity;
+
+const LIBRARY_NAME = 'react-native-wear-connectivity ';
+const IOS_NOT_SUPPORTED_WARNING =
+  ' does not support iOS. Please use react-native-watch-connectivity library for iOS.';
+const iosFunctionMock = (methodName: String) => () =>
+  console.warn(LIBRARY_NAME + methodName + IOS_NOT_SUPPORTED_WARNING);
+
+if (Platform.OS === 'ios') {
+  sendMessageExport = iosFunctionMock('sendMessage');
+  watchEventsExport = {
+    addListener: iosFunctionMock('addListener'),
+    on: iosFunctionMock('watchEvents'),
+  };
+} else {
+  sendMessageExport = sendMessage;
+  watchEventsExport = watchEvents;
+}
+
 export {
-  sendMessage,
-  watchEvents,
+  sendMessageExport as sendMessage,
+  watchEventsExport as watchEvents,
   WearConnectivity,
-  ReplyCallback,
-  ErrorCallback,
 };
+export type { ReplyCallback, ErrorCallback };
