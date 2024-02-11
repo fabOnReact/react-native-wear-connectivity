@@ -8,7 +8,7 @@ function CounterScreen() {
   const [count, setCount] = React.useState(0);
 
   useEffect(() => {
-    const unsubscribe = watchEvents.on('message', (message: Function) => {
+    const unsubscribe = watchEvents.on('message', () => {
       setCount((prevCount) => prevCount + 1);
     });
 
