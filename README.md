@@ -1,6 +1,9 @@
 # react-native-wear-connectivity
 
-Enstablish a two-way connection with wearOS.
+Create a [wearOS][1] app using react-native and connect it to your react-native phone android app.
+Both phone and wearOS apps are built with react-native.
+
+[1]: https://wearos.google.com
 
 ## Installation
 
