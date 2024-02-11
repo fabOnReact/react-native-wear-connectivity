@@ -2800,20 +2800,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-google-signin/google-signin@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@react-native-google-signin/google-signin@npm:11.0.0"
-  peerDependencies:
-    expo: ">=47.0.0"
-    react: "*"
-    react-native: "*"
-  peerDependenciesMeta:
-    expo:
-      optional: true
-  checksum: 58651579f2b23bc73b17510fc3d621a72d9a079778deec08aa74d421b5cfa9766ae8395b9c59dfececf61149461f369d1fedebee3635bd0e4c2a1fda7b89d3ef
-  languageName: node
-  linkType: hard
-
 "@react-native/assets-registry@npm:0.73.1":
   version: 0.73.1
   resolution: "@react-native/assets-registry@npm:0.73.1"
@@ -10833,18 +10819,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-config@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "react-native-config@npm:1.5.1"
-  peerDependencies:
-    react-native-windows: ">=0.61"
-  peerDependenciesMeta:
-    react-native-windows:
-      optional: true
-  checksum: ae17b750e445310573ce33798db67c9b8c50e55cb2ba136e9a9ef8372dd3f7669ce236bb18bf1fa8a426fd1aa9e6b516fb2f593767bd24688242f6847cd37712
-  languageName: node
-  linkType: hard
-
 "react-native-phone-connectivity-example@workspace:example":
   version: 0.0.0-use.local
   resolution: "react-native-phone-connectivity-example@workspace:example"
@@ -10852,7 +10826,6 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@react-native-google-signin/google-signin": ^11.0.0
     "@react-native/babel-preset": 0.73.21
     "@react-native/metro-config": 0.73.5
     "@react-native/typescript-config": 0.73.1
@@ -10861,7 +10834,6 @@ __metadata:
     pod-install: ^0.1.0
     react: 18.2.0
     react-native: 0.73.4
-    react-native-config: ^1.5.1
   languageName: unknown
   linkType: soft
 
