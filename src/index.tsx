@@ -1,6 +1,7 @@
-import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
+import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity.ts';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -30,4 +31,30 @@ export function multiply(a: number, b: number): Promise<number> {
   return WearConnectivity.multiply(a, b);
 }
 
-export { sendMessage, watchEvents, WearConnectivity };
+let sendMessageExport;
+let watchEventsExport;
+// let WearConnectivity;
+
+const LIBRARY_NAME = 'react-native-wear-connectivity ';
+const IOS_NOT_SUPPORTED_WARNING =
+  ' does not support iOS. Please use react-native-watch-connectivity library for iOS.';
+const iosFunctionMock = (methodName: String) => () =>
+  console.warn(LIBRARY_NAME + methodName + IOS_NOT_SUPPORTED_WARNING);
+
+if (Platform.OS === 'ios') {
+  sendMessageExport = iosFunctionMock('sendMessage');
+  watchEventsExport = {
+    addListener: iosFunctionMock('addListener'),
+    on: iosFunctionMock('watchEvents'),
+  };
+} else {
+  sendMessageExport = sendMessage;
+  watchEventsExport = watchEvents;
+}
+
+export {
+  sendMessageExport as sendMessage,
+  watchEventsExport as watchEvents,
+  WearConnectivity,
+};
+export type { ReplyCallback, ErrorCallback };

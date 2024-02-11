@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import { sendMessage, watchEvents } from '../../src/index';
+import type { ReplyCallback, ErrorCallback } from '../../src/index';
 
 export default function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = watchEvents.on('message', (message, reply) => {
+    const unsubscribe = watchEvents.on('message', () => {
       setCount((prevCount) => prevCount + 1);
     });
 
@@ -16,8 +17,8 @@ export default function App() {
     };
   }, []);
 
-  const onSuccess = (result) => console.log(result);
-  const onError = (error) => console.log(error);
+  const onSuccess: ReplyCallback = (result) => console.log(result);
+  const onError: ErrorCallback = (error) => console.log(error);
 
   const sendMessageToPhone = () => {
     const json = { text: 'hello', event: 'message' };

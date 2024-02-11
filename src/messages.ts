@@ -1,7 +1,7 @@
-import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
 import type { SendMessage } from './NativeWearConnectivity';
 import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
 import { WearConnectivity } from './index';
+import { platformCheck } from './utilities';
 
 const sendMessage: SendMessage = (message, cb, errCb) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
