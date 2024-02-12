@@ -69,8 +69,6 @@ function CounterScreen() {
 }
 ```
 
-## API Documentation
-
 ## How to create a WearOS app using react-native
 
 - Create a new react-native app using the same name of your Mobile app. Both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle). etc.)
@@ -98,9 +96,33 @@ You can now build the app with `yarn android`. JS fast-refresh and the other met
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
 [22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
 
+## API Documentation
+
+### Send Messages
+
+```js
+import { sendMessage } from 'react-native-wear-connectivity';
+
+sendMessage({ text: 'Hello watch!' });
+```
+
+### Receive Messages
+
+```js
+import { watchEvents } from 'react-native-wear-connectivity';
+
+const unsubscribe = watchEvents.on('message', (message) => {
+  console.log('received message from watch', message);
+});
+```
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+
+Feature requests are discussed in the [issue tracker][40].
+
+[40]: https://github.com/fabOnReact/react-native-wear-connectivity/issues
 
 ## License
 
