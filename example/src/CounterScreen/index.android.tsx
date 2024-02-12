@@ -28,7 +28,7 @@ function CounterScreen() {
 
   const sendMessageToWear = () => {
     setDisabled(true);
-    const json = { text: 'hello', event: 'message' };
+    const json = { text: 'hello' };
     sendMessage(json, onSuccess, onError);
   };
 

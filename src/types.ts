@@ -1,14 +1,3 @@
-// Messages
-export type Payload = {};
-export type ReplyCallback = (reply: Payload) => void;
-export type ErrorCallback = (err: string) => void;
-
-export type SendMessage = (
-  message: Payload,
-  cb: ReplyCallback,
-  errCb: ErrorCallback
-) => void;
-
 // Subscriptions
 export type EventType = 'message';
 type UnsubscribeFn = Function;
