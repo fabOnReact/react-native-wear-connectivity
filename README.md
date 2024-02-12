@@ -71,8 +71,8 @@ Add the following line to your new project AndroidManifest `my-react-native-wear
 
 - Pair the android emulator with the wearos emulator (instructions [here][21]). I suggest using the emulator [WearOS Large round][22], as the other emulator have issues with react-native dev menu.
 - Start metro server on port 8082 with `yarn start --port=8082`
-- Open the `react native dev menu` and change the bundle location to `your-ip:8081` (for ex. `192.168.18.2:8082`).
-- Repeat same steps for Android Phone Emulator and use a different port.
+- Open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+- Repeat same steps for Android Phone Emulator and use a different port (for ex. 8081).
 - **Important Note**: Before publishing to GooglePlay, make sure that both apps are signed using the same key (instructions [here][20])
 
 You can now build the app from the root directory with `yarn android`. JS fastrefresh and the other metro functionalities work without problem (no need to build for js changes).
