@@ -6,6 +6,16 @@
 
 [1]: https://wearos.google.com
 
+# Table of Contents
+
+- [react-native-wear-connectivity](#react-native-wear-connectivity)
+- [Installation](#installation)
+- [Example of implementation](#example-of-implementation)
+- [API Documentation](#api-documentation)
+- [How to create a WearOS app using react-native](#how-to-create-a-wearos-app-using-react-native)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Installation
 
 ```sh
@@ -18,15 +28,16 @@ or
 npm install react-native-wear-connectivity
 ```
 
-## Usage
+## Example of implementation
 
 ```js
-import React, { useEffect } from 'react';
+// Example of Mobile App, for the WearOS app you can implement something similar or check out the ffolder watch-example
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 
 function CounterScreen() {
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = useState(0);
 
   // listen for messages from wearOS/phone
   useEffect(() => {
@@ -56,6 +67,8 @@ function CounterScreen() {
   );
 }
 ```
+
+## API Documentation
 
 ## How to create a WearOS app using react-native
 
