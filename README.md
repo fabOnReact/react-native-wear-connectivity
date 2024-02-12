@@ -4,7 +4,10 @@
 - Connect two react-native apps (Wear OS and Android phone)
 - **Both apps are written in react-native**
 
+**Note**: This library allows you to write your Andorid WearOS and Mobile apps in React Native, forApple Watch refer to [react-native-watch-connectivity][2].
+
 [1]: https://wearos.google.com
+[2]: https://github.com/mtford90/react-native-watch-connectivity
 
 # Table of Contents
 
