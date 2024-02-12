@@ -4,7 +4,7 @@
 - Connect two react-native apps (Wear OS and Android phone)
 - **Both apps are written in react-native**
 
-**Note**: This library allows you to write your Andorid WearOS and Mobile apps in React Native, forApple Watch refer to [react-native-watch-connectivity][2].
+**Note**: This library allows you to write your Andorid WearOS and Mobile apps in React Native, for Apple Watch refer to [react-native-watch-connectivity][2].
 
 [1]: https://wearos.google.com
 [2]: https://github.com/mtford90/react-native-watch-connectivity
@@ -73,7 +73,7 @@ function CounterScreen() {
 - Create a new react-native app using the same name of your Mobile app.
   It is important to use the same name, because both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
 
-```bash
+```sh
 npx react-native@latest init YourMobileAppName
 ```
 
@@ -87,7 +87,7 @@ npx react-native@latest init YourMobileAppName
 - Create a new emulator of type [WearOS Large round][22].
 - Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
 - Start the metro server on port 8082 with `yarn start --port=8082`
-- Build the project with `yarn android`, open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+- Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
 - Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
 - **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
 
@@ -96,6 +96,7 @@ You can now build the app with `yarn android`. JS fast-refresh and the other met
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
 [22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
+[23]: https://reactnative.dev/docs/debugging
 
 ## API Documentation
 
