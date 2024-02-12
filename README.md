@@ -21,6 +21,8 @@ npm install react-native-wear-connectivity
 ## Usage
 
 ```js
+import React, { useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 
 function CounterScreen() {
@@ -57,17 +59,18 @@ function CounterScreen() {
 
 ## How to create a WearOS app using react-native
 
-- Create a copy of your react-native project. For Example:
+- Create a new react-native app using the same name of your Mobile app. Both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle). etc.)
 
 ```bash
-cp my-react-native-project my-react-native-wear-project
+// if your Mobile App name was AwesomeProject, create a new app with the same name
+npx react-native@latest init AwesomeProject
+// otherwise you can copy your react-native app in a new folder
 ```
 
 - Add the following line to the new project AndroidManifest (file ):
 
-
 ```xml
-<!--the file is my-react-native-wear-project/android/app/src/main/AndroidManifest.xml-->
+<!-- this file is located at android/app/src/main/AndroidManifest.xml -->
 <uses-feature android:name="android.hardware.type.watch" />
 ```
 
