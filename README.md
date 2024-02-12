@@ -30,8 +30,9 @@ npm install react-native-wear-connectivity
 
 ## Example of implementation
 
+Implementation of the above counter application.
+
 ```js
-// Example of Mobile App, for the WearOS app you can implement something similar or check out the ffolder watch-example
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
