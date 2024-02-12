@@ -32,55 +32,6 @@ If you want to use Android Studio or XCode to edit the native code, you can open
 
 To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `react-native-wear-connectivity` under `Android`.
 
-You can use various commands from the root directory to work with the project.
-
-To start the packager:
-
-```sh
-yarn example start
-```
-
-To run the example app on Android:
-
-```sh
-yarn example android
-```
-
-To run the example app on iOS:
-
-```sh
-yarn example ios
-```
-
-By default, the example is configured to build with the old architecture. To run the example with the new architecture, you can do the following:
-
-1. For Android, run:
-
-   ```sh
-   ORG_GRADLE_PROJECT_newArchEnabled=true yarn example android
-   ```
-
-2. For iOS, run:
-
-   ```sh
-   RCT_NEW_ARCH_ENABLED=1 yarn pod-install example/ios
-   yarn example ios
-   ```
-
-If you are building for a different architecture than your previous build, make sure to remove the build folders first. You can run the following command to cleanup all build folders:
-
-```sh
-yarn clean
-```
-
-To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
-
-```sh
-Running "WearConnectivityExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
-```
-
-Note the `"fabric":true` and `"concurrentRoot":true` properties.
-
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
 ```sh
@@ -99,19 +50,6 @@ Remember to add tests for your change if possible. Run the unit tests by:
 ```sh
 yarn test
 ```
-
-### Commit message convention
-
-We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
-
-- `fix`: bug fixes, e.g. fix crash due to deprecated method.
-- `feat`: new features, e.g. add new method to the module.
-- `refactor`: code refactor, e.g. migrate from class components to hooks.
-- `docs`: changes into documentation, e.g. add usage example for the module..
-- `test`: adding or updating tests, e.g. add integration tests using detox.
-- `chore`: tooling changes, e.g. change CI config.
-
-Our pre-commit hooks verify that your commit message matches this format when committing.
 
 ### Linting and tests
 
@@ -139,9 +77,6 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn typecheck`: type-check files with TypeScript.
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
 
 ### Sending a pull request
 
