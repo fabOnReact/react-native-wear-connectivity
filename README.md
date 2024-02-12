@@ -8,13 +8,11 @@
 
 # Table of Contents
 
-- [react-native-wear-connectivity](#react-native-wear-connectivity)
 - [Installation](#installation)
 - [Example of implementation](#example-of-implementation)
-- [API Documentation](#api-documentation)
 - [How to create a WearOS app using react-native](#how-to-create-a-wearos-app-using-react-native)
+- [API Documentation](#api-documentation)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
@@ -40,7 +38,6 @@ import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 function CounterScreen() {
   const [count, setCount] = useState(0);
 
-  // listen for messages from wearOS/phone
   useEffect(() => {
     const unsubscribe = watchEvents.on('message', () => {
       setCount((prevCount) => prevCount + 1);
@@ -51,7 +48,6 @@ function CounterScreen() {
     };
   }, []);
 
-  // send a message from/to wearOS
   const onSuccess = (result) => console.log(result);
   const onError = (error) => console.log(error);
 
@@ -71,10 +67,10 @@ function CounterScreen() {
 
 ## How to create a WearOS app using react-native
 
-- Create a new react-native app using the same name of your Mobile app. Both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle). etc.)
+- Create a new react-native app using the same name of your Mobile app, because both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
 
 ```bash
-npx react-native@latest init AwesomeProject
+npx react-native@latest init YourMobileAppName
 ```
 
 - Add the following line to the new project AndroidManifest (file ):
@@ -84,7 +80,8 @@ npx react-native@latest init AwesomeProject
 <uses-feature android:name="android.hardware.type.watch" />
 ```
 
-- Pair the Android emulator with the Wear OS emulator (instructions [here][21]). I suggest using the emulator [WearOS Large round][22], as the other emulator has issues with the react-native dev menu.
+- Create a new emulator of type [WearOS Large round][22].
+- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
 - Start the metro server on port 8082 with `yarn start --port=8082`
 - Open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
 - Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
