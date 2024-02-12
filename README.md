@@ -4,7 +4,7 @@
 - Connect two react-native apps (Wear OS and Android phone)
 - **Both apps are written in react-native**
 
-**Note**: This library allows you to write your Andorid WearOS and Mobile apps in React Native, for Apple Watch refer to [react-native-watch-connectivity][2].
+**Note**: This library allows you to write your Android WearOS and Mobile apps in React Native, refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
 [1]: https://wearos.google.com
 [2]: https://github.com/mtford90/react-native-watch-connectivity
@@ -70,8 +70,8 @@ function CounterScreen() {
 
 ## How to create a WearOS app using react-native
 
-- Create a new react-native app using the same name of your Mobile app.
-  It is important to use the same name, because both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
+- Create a new react-native app using the same name as your Mobile app.
+  It is important to use the same name because both apps need to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
 
 ```sh
 npx react-native@latest init YourMobileAppName
