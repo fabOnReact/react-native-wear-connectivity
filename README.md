@@ -55,7 +55,7 @@ function CounterScreen() {
   const onError = (error) => console.log(error);
 
   const sendMessageToWear = () => {
-    const json = { text: 'hello', event: 'message' };
+    const json = { text: 'hello' };
     sendMessage(json, onSuccess, onError);
   };
 
@@ -87,7 +87,7 @@ npx react-native@latest init YourMobileAppName
 - Create a new emulator of type [WearOS Large round][22].
 - Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
 - Start the metro server on port 8082 with `yarn start --port=8082`
-- Open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+- Build the project with `yarn android`, open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
 - Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
 - **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
 
