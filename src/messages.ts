@@ -31,10 +31,8 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
 const sendMessageMock: SendMessage = () =>
   console.warn(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
 
-let sendMessageExport: SendMessage;
-if (Platform.OS === 'ios') {
-  sendMessageExport = sendMessageMock;
-} else {
+let sendMessageExport: SendMessage = sendMessageMock;
+if (Platform.OS !== 'ios') {
   sendMessageExport = sendMessage;
 }
 
