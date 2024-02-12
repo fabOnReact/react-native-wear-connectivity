@@ -1,7 +1,7 @@
 # react-native-wear-connectivity
 
 - Create a [Wear OS][1] app using react-native
-- Connect two react-native apps (Wear OS and Android phone)
+- Connect two react-native apps (Wear OS and Android mobile app)
 - **Both apps are written in react-native**
 
 
