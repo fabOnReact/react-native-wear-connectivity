@@ -9,13 +9,18 @@ We want this community to be friendly and respectful to each other. Please follo
 This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
 
 - The library package in the root directory.
-- An example app in the `example/` directory.
+- The mobile android app is in the `example/` directory.
+- The Wear OS android app is in the `watch-example/` directory.
 
 To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
 
 ```sh
 yarn
 ```
+
+To run the wearos and mobile apps follow this [instructions][1].
+
+[1]: https://github.com/fabOnReact/react-native-wear-connectivity?tab=readme-ov-file#how-to-create-a-wearos-app-using-react-native
 
 > Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development.
 
