@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
-import { sendMessage, watchEvents } from '../../../src/index';
-import type { ReplyCallback, ErrorCallback } from '../../../src/index';
+import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import type {
+  ReplyCallback,
+  ErrorCallback,
+} from 'react-native-wear-connectivity';
 
 function CounterScreen() {
   const [disabled, setDisabled] = React.useState(false);
