@@ -18,7 +18,7 @@ To get started with the project, run `yarn` in the root directory to install the
 yarn
 ```
 
-To run the wearos and mobile apps follow this [instructions][1].
+To run the wearos and android mobile apps follow this [instructions][1], for iOS follow the same steps and use `pod install` and `yarn ios`.
 
 [1]: https://github.com/fabOnReact/react-native-wear-connectivity?tab=readme-ov-file#how-to-create-a-wearos-app-using-react-native
 

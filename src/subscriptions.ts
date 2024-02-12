@@ -1,8 +1,11 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import type { AddListener, WatchEvents } from './types';
 import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
 const _addListener: AddListener = (event, cb) => {
+  const nativeWatchEventEmitter = new NativeEventEmitter(
+    NativeModules.AndroidWearCommunication
+  );
   if (!event) {
     throw new Error('Must pass event');
   }
@@ -18,23 +21,21 @@ const _addListener: AddListener = (event, cb) => {
   return () => sub.remove();
 };
 
-const nativeWatchEventEmitter = new NativeEventEmitter(
-  NativeModules.AndroidWearCommunication
-);
-
 const _addListenerMock: AddListener = () => {
   console.warn(LIBRARY_NAME + 'watchEvents' + IOS_NOT_SUPPORTED_WARNING);
   return () => {};
 };
 
-const watchEventsMock: WatchEvents = {
+let watchEvents: WatchEvents = {
   addListener: _addListenerMock,
-  on: _addListener,
+  on: _addListenerMock,
 };
 
-const watchEvents: WatchEvents = {
-  addListener: _addListener,
-  on: _addListener,
-};
+if (Platform.OS !== 'ios') {
+  watchEvents = {
+    addListener: _addListener,
+    on: _addListener,
+  };
+}
 
-export { watchEvents, watchEventsMock };
+export { watchEvents };

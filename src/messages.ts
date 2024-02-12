@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type { SendMessage, Payload } from './NativeWearConnectivity';
 import { WearConnectivity } from './index';
 import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
@@ -30,4 +31,11 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
 const sendMessageMock: SendMessage = () =>
   console.warn(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
 
-export { sendMessage, sendMessageMock };
+let sendMessageExport: SendMessage;
+if (Platform.OS === 'ios') {
+  sendMessageExport = sendMessageMock;
+} else {
+  sendMessageExport = sendMessage;
+}
+
+export { sendMessageExport as sendMessage };

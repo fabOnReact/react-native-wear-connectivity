@@ -1,12 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
-import { watchEvents, watchEventsMock } from './subscriptions';
-import { sendMessage, sendMessageMock } from './messages';
-import type { WatchEvents } from './types';
-import type {
-  ReplyCallback,
-  ErrorCallback,
-  SendMessage,
-} from './NativeWearConnectivity';
+import { watchEvents } from './subscriptions';
+import { sendMessage } from './messages';
+import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -32,20 +27,5 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-let sendMessageExport: SendMessage;
-let watchEventsExport: WatchEvents;
-
-if (Platform.OS === 'ios') {
-  sendMessageExport = sendMessageMock;
-  watchEventsExport = watchEventsMock;
-} else {
-  sendMessageExport = sendMessage;
-  watchEventsExport = watchEvents;
-}
-
-export {
-  sendMessageExport as sendMessage,
-  watchEventsExport as watchEvents,
-  WearConnectivity,
-};
+export { sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
