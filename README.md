@@ -63,7 +63,7 @@ Make a copy of your react-native project. For Example:
 cp my-react-native-project my-react-native-wear-project
 ```
 
-Add the following line to your new project AndroidManifest `my-react-native-wear-project/android/app/src/main/AndoridManifest.xml`
+Add the following line to your new project AndroidManifest `my-react-native-wear-project/android/app/src/main/AndroidManifest.xml`
 
 ```xml
 <uses-feature android:name="android.hardware.type.watch" />
@@ -75,7 +75,7 @@ Add the following line to your new project AndroidManifest `my-react-native-wear
 - Repeat same steps for Android Phone Emulator and use a different port (for ex. 8081).
 - **Important Note**: Before publishing to GooglePlay, make sure that both apps are signed using the same key (instructions [here][20])
 
-You can now build the app from the root directory with `yarn android`. JS fastrefresh and the other metro functionalities work without problem (no need to build for js changes).
+You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem (no need to build for js changes).
 
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
@@ -88,7 +88,3 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
