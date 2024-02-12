@@ -70,7 +70,8 @@ function CounterScreen() {
 
 ## How to create a WearOS app using react-native
 
-- Create a new react-native app using the same name of your Mobile app, because both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
+- Create a new react-native app using the same name of your Mobile app.
+  It is important to use the same name, because both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
 
 ```bash
 npx react-native@latest init YourMobileAppName
