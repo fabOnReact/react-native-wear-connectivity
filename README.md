@@ -1,8 +1,8 @@
 # react-native-wear-connectivity
 
-- Create a [wearOS][1] app using react-native
-- Connect two react-native apps (wearOS and android phone)
-- **Both apps are writter in react-native**
+- Create a [Wear OS][1] app using react-native
+- Connect two react-native apps (Wear OS and Android phone)
+- **Both apps are written in react-native**
 
 [1]: https://wearos.google.com
 
@@ -55,27 +55,29 @@ function CounterScreen() {
 }
 ```
 
-## How to create WearOS app using react-native
+## How to create a WearOS app using react-native
 
-Make a copy of your react-native project. For Example:
+- Create a copy of your react-native project. For Example:
 
 ```bash
 cp my-react-native-project my-react-native-wear-project
 ```
 
-Add the following line to your new project AndroidManifest `my-react-native-wear-project/android/app/src/main/AndroidManifest.xml`
+- Add the following line to the new project AndroidManifest (file ):
+
 
 ```xml
+<!--the file is my-react-native-wear-project/android/app/src/main/AndroidManifest.xml-->
 <uses-feature android:name="android.hardware.type.watch" />
 ```
 
-- Pair the android emulator with the wearos emulator (instructions [here][21]). I suggest using the emulator [WearOS Large round][22], as the other emulator have issues with react-native dev menu.
-- Start metro server on port 8082 with `yarn start --port=8082`
+- Pair the Android emulator with the Wear OS emulator (instructions [here][21]). I suggest using the emulator [WearOS Large round][22], as the other emulator has issues with the react-native dev menu.
+- Start the metro server on port 8082 with `yarn start --port=8082`
 - Open the `react native dev menu` and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
-- Repeat same steps for Android Phone Emulator and use a different port (for ex. 8081).
-- **Important Note**: Before publishing to GooglePlay, make sure that both apps are signed using the same key (instructions [here][20])
+- Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
+- **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
 
-You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem (no need to build for js changes).
+You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem (no need to build for JS changes).
 
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
