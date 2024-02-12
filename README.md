@@ -76,9 +76,7 @@ function CounterScreen() {
 - Create a new react-native app using the same name of your Mobile app. Both apps needs to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle). etc.)
 
 ```bash
-// if your Mobile App name was AwesomeProject, create a new app with the same name
 npx react-native@latest init AwesomeProject
-// otherwise you can copy your react-native app in a new folder
 ```
 
 - Add the following line to the new project AndroidManifest (file ):
