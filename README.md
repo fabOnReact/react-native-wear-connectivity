@@ -4,10 +4,7 @@
 - Connect two react-native apps (Wear OS and Android mobile app)
 - **Both apps are written in react-native**
 
-
-
 https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415fab47-7d76-4c72-80b9-c0d19ec25a49
-
 
 **Note**: This library allows you to write your Android WearOS and Mobile apps in React Native, refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
@@ -122,6 +119,16 @@ const unsubscribe = watchEvents.on('message', (message) => {
   console.log('received message from watch', message);
 });
 ```
+
+## FAQ
+
+```
+WearConnectivityModule failed to retrieve nodes with error:
+java.util.concurrent.ExecutionException: com.google.android.gms.common.api.ApiException: 17: API: Wearable.API is not available on this device.
+Connection failed with: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+```
+
+The Android Phone did not install the Wear OS app and did not pair with Wear OS device. Follow this [instructions][21].
 
 ## Contributing
 
