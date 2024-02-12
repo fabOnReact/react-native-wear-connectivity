@@ -91,7 +91,7 @@ npx react-native@latest init YourMobileAppName
 - Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
 - **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
 
-You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem (no need to build for JS changes).
+You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem.
 
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
