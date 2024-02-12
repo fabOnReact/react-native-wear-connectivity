@@ -1,6 +1,7 @@
-import type { SendMessage } from './NativeWearConnectivity';
+import type { SendMessage } from './types';
 import { defaultReplyCb, defaultErrCb } from './NativeWearConnectivity';
 import { WearConnectivity } from './index';
+import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
 const sendMessage: SendMessage = (message, cb, errCb) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
@@ -12,4 +13,7 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
   );
 };
 
-export { sendMessage };
+const sendMessageMock: SendMessage = () =>
+  console.warn(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
+
+export { sendMessage, sendMessageMock };

@@ -1,7 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-
-type EventType = 'message';
-type AddListener = (event: EventType, cb: Function) => UnsubscribeFn;
+import type { AddListener, WatchEvents } from './types';
+import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
 const _addListener: AddListener = (event, cb) => {
   if (!event) {
@@ -23,7 +22,19 @@ const nativeWatchEventEmitter = new NativeEventEmitter(
   NativeModules.AndroidWearCommunication
 );
 
-export const watchEvents = {
+const _addListenerMock: AddListener = () => {
+  console.warn(LIBRARY_NAME + 'watchEvents' + IOS_NOT_SUPPORTED_WARNING);
+  return () => {};
+};
+
+const watchEventsMock: WatchEvents = {
+  addListener: _addListenerMock,
+  on: _addListener,
+};
+
+const watchEvents: WatchEvents = {
   addListener: _addListener,
   on: _addListener,
 };
+
+export { watchEvents, watchEventsMock };
