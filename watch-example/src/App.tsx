@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 import type {
   ReplyCallback,
@@ -29,8 +29,12 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>count is: {count}</Text>
-      <TouchableOpacity onPress={sendMessageToPhone} style={styles.button} />
+      <View style={styles.textBackground}>
+        <Text style={styles.count}>The count is {count}</Text>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="press" color="#B4B1B3" onPress={sendMessageToPhone} />
+      </View>
     </View>
   );
 }
@@ -40,18 +44,33 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'yellow',
+    backgroundColor: '#FDFDFD',
+  },
+  buttonContainer: {
+    marginTop: 30,
   },
   box: {
     width: 60,
     height: 60,
     marginVertical: 20,
   },
-  button: {
-    marginTop: 50,
-    height: 50,
-    width: 50,
-    backgroundColor: 'red',
-    borderRadius: 50,
+  count: {
+    borderRadius: 3,
+    padding: 5,
+    backgroundColor: '#9C9A9D',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    marginTop: 20,
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '500',
+  },
+  plusIcon: {
+    flex: 1,
+    color: 'white',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 30,
+    fontWeight: '400',
   },
 });
