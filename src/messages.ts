@@ -17,10 +17,11 @@ const defaultErrCb = (err: string) => {
 };
 
 const sendMessage: SendMessage = (message, cb, errCb) => {
+  const json: Payload = { ...message, event: 'message' };
   const callbackWithDefault = cb ?? defaultReplyCb;
   const errCbWithDefault = errCb ?? defaultErrCb;
   return WearConnectivity.sendMessage(
-    message,
+    json,
     callbackWithDefault,
     errCbWithDefault
   );
