@@ -22,6 +22,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
+import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,59 +56,65 @@ public class WearConnectivityModule extends WearConnectivitySpec
     return NAME;
   }
 
-  private List<Node> retrieveNodes(Callback errorCb) {
+  private List<Node> retrieveNodes() {
     try {
       NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
       // TODO: implement Runnable to run task in the background thread
       // https://stackoverflow.com/a/64969640/7295772
       return Tasks.await(nodeClient.getConnectedNodes());
     } catch (Exception e) {
-      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
-      return null;
+      throw new Error(RETRIEVE_NODES_FAILED + e);
     }
   }
 
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
-    List<Node> connectedNodes = retrieveNodes(errorCb);
-    if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
-      for (Node connectedNode : connectedNodes) {
-        if (connectedNode.isNearby()) {
-          JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-          sendMessageToClient(messageJSON.toString(), connectedNode, replyCb, errorCb);
-        }
-      }
-    } else {
-      FLog.w(TAG, NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
-    }
+    sendAnyMessage((connectedNode) -> {
+      JSONObject messageJSON = new JSONObject(messageData.toHashMap());
+      sendMessageToClient(messageJSON.toString(), connectedNode);
+    }, replyCb, errorCb);
   }
 
   @ReactMethod
-  public void sendGenuineMessage( String messagePath, Callback replyCb, Callback errorCb) {
-    List<Node> connectedNodes = retrieveNodes(errorCb);
-    if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
-      for (Node connectedNode : connectedNodes) {
-        if (connectedNode.isNearby()) {
-          sendMessageToClient(messagePath, connectedNode, replyCb, errorCb);
+  public void sendGenuineMessage(String messagePath, Callback replyCb, Callback errorCb) {
+    sendAnyMessage((connectedNode) -> {
+      sendMessageToClient(messagePath, connectedNode);
+    }, replyCb, errorCb);
+  }
+
+  private interface SendFunctionInterface {
+    public void sendFunction(Node node);
+  }
+
+  private void sendAnyMessage(SendFunctionInterface sendFunctionInterface, Callback replyCb, Callback errorCb) {
+    try {
+      List<String> nodeIds = new ArrayList<>();
+      List<Node> connectedNodes = retrieveNodes();
+      if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
+        for (Node connectedNode : connectedNodes) {
+          sendFunctionInterface.sendFunction(connectedNode);
+          nodeIds.add(connectedNode.getId());
         }
+      } else {
+        throw new Error(NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
       }
-    } else {
-      FLog.w(TAG, NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
+      replyCb.invoke("messages sent to all connected nodes: " + nodeIds);
+    } catch (Error e) {
+      errorCb.invoke(e.toString());
     }
   }
 
-  private void sendMessageToClient(
-      String messagePath, Node node, Callback replyCb, Callback errorCb) {
+  private void sendMessageToClient(String messagePath, Node node) {
     OnSuccessListener<Object> onSuccessListener =
-        object -> replyCb.invoke("message sent to client with nodeID: " + node.id + " and sent message ID: "  + object.toString());
+      object -> Log.i(TAG, "message \"" + messagePath + "\" sent to client with nodeID: " + node.getId() + " and sent message ID: " + object.toString());
     OnFailureListener onFailureListener =
-        object -> errorCb.invoke("message sent to client with nodeID: " + node.id +  " and sent message ID: "  + object.toString());
+        object -> { throw new Error("message \\\"\" + messagePath + \"\\\" not sent to client with nodeID: " + node.getId() +  " and sent message ID: " + object.toString()); };
     try {
       Task<Integer> sendTask = client.sendMessage(node.getId(), messagePath, null);
       sendTask.addOnSuccessListener(onSuccessListener);
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
-      errorCb.invoke("sendMessage failed: " + e);
+      throw new Error("sendMessage failed: " + e);
     }
   }
 
