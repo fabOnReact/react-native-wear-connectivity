@@ -73,7 +73,22 @@ public class WearConnectivityModule extends WearConnectivitySpec
     if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
-          sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
+          JSONObject messageJSON = new JSONObject(messageData.toHashMap());
+          sendMessageToClient(messageJSON.toString(), connectedNode, replyCb, errorCb);
+        }
+      }
+    } else {
+      FLog.w(TAG, NO_NODES_FOUND + " client: " + client + " connectedNodes: " + connectedNodes);
+    }
+  }
+
+  @ReactMethod
+  public void sendGenuineMessage( String messagePath, Callback replyCb, Callback errorCb) {
+    List<Node> connectedNodes = retrieveNodes(errorCb);
+    if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
+      for (Node connectedNode : connectedNodes) {
+        if (connectedNode.isNearby()) {
+          sendMessageToClient(messagePath, connectedNode, replyCb, errorCb);
         }
       }
     } else {
@@ -82,15 +97,13 @@ public class WearConnectivityModule extends WearConnectivitySpec
   }
 
   private void sendMessageToClient(
-      ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
+      String messagePath, Node node, Callback replyCb, Callback errorCb) {
     OnSuccessListener<Object> onSuccessListener =
-        object -> replyCb.invoke("message sent to client with nodeID: " + object.toString());
+        object -> replyCb.invoke("message sent to client with nodeID: " + node.id + " and sent message ID: "  + object.toString());
     OnFailureListener onFailureListener =
-        object -> errorCb.invoke("message sent to client with nodeID: " + object.toString());
+        object -> errorCb.invoke("message sent to client with nodeID: " + node.id +  " and sent message ID: "  + object.toString());
     try {
-      // the last parameter is for file transfer (for ex. audio)
-      JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-      Task<Integer> sendTask = client.sendMessage(node.getId(), messageJSON.toString(), null);
+      Task<Integer> sendTask = client.sendMessage(node.getId(), messagePath, null);
       sendTask.addOnSuccessListener(onSuccessListener);
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
