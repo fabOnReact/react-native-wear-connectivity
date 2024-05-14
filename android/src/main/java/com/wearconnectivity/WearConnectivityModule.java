@@ -12,6 +12,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -123,16 +124,13 @@ public class WearConnectivityModule extends WearConnectivitySpec
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
-      FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
+      Log.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
       sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
     } catch (JSONException e) {
-      FLog.w(
-          TAG,
-          TAG
-              + "onMessageReceived with message: "
-              + messageEvent.getPath()
-              + " failed with error: "
-              + e);
+      Log.w(TAG, TAG + "  message: " + messageEvent.getPath());
+      WritableMap map = new WritableNativeMap();
+      map.putString("text", messageEvent.getPath());
+      sendEvent(getReactApplicationContext(), "message", map);
     }
   }
 
