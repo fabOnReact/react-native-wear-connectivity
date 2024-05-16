@@ -100,8 +100,10 @@ dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
+  implementation "androidx.wear:wear-remote-interactions:1.0.0"
   implementation "com.facebook.react:react-native:+"
-  implementation 'com.google.android.gms:play-services-wearable:18.1.0'
+  implementation "com.google.android.gms:play-services-wearable:18.1.0"
+  implementation "com.google.guava:guava:31.0.1-jre"
 }
 
 if (isNewArchitectureEnabled()) {

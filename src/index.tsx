@@ -1,7 +1,11 @@
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage, sendGenuineMessage } from './messages';
-import { getCapableAndReachableNodes, getNonCapableAndReachableNodes } from './capability';
+import {
+  getCapableAndReachableNodes,
+  getNonCapableAndReachableNodes,
+} from './capability';
+import { openRemoteURI } from './intent';
 import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity';
 
 const LINKING_ERROR =
@@ -34,6 +38,7 @@ export {
   watchEvents,
   getCapableAndReachableNodes,
   getNonCapableAndReachableNodes,
+  openRemoteURI,
   WearConnectivity,
 };
 export type { ReplyCallback, ErrorCallback };

@@ -1,10 +1,11 @@
 package com.wearconnectivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import androidx.wear.remote.interactions.RemoteActivityHelper;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
@@ -28,12 +29,16 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
-
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
-
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,7 +47,9 @@ public class WearConnectivityModule extends WearConnectivitySpec
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "WearConnectivityModule ";
   private final MessageClient messageClient;
+  private final NodeClient nodeClient;
   private final CapabilityClient capabilityClient;
+  private final RemoteActivityHelper remoteActivityHelper;
   private String MESSAGE_CLIENT_ADDED =
     TAG + "onMessageReceived listener added when activity is created. Client receives messages.";
   private String NO_NODES_FOUND = TAG + "sendMessage failed. No connected nodes found.";
@@ -57,7 +64,9 @@ public class WearConnectivityModule extends WearConnectivitySpec
     super(context);
     context.addLifecycleEventListener(this);
     messageClient = Wearable.getMessageClient(context);
+    nodeClient = Wearable.getNodeClient(context);
     capabilityClient = Wearable.getCapabilityClient(context);
+    remoteActivityHelper = new RemoteActivityHelper(context, Executors.newSingleThreadExecutor());
     Log.d(TAG, MESSAGE_CLIENT_ADDED);
     messageClient.addListener(this);
   }
@@ -70,7 +79,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   private List<Node> _retrieveNodes() {
     try {
-      NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
       // TODO: implement Runnable to run task in the background thread
       // https://stackoverflow.com/a/64969640/7295772
       return Tasks.await(nodeClient.getConnectedNodes());
@@ -210,6 +218,28 @@ public class WearConnectivityModule extends WearConnectivitySpec
       throwable.printStackTrace();
       errorCb.invoke("Non-Capability request failed to return any results. \n reason : " + throwable.getMessage());
     }
+  }
+
+  @ReactMethod
+  public void openRemoteURI (String uri, String nodeId, Callback replyCb, Callback errorCb) {
+    Intent remoteIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(uri)).addCategory(Intent.CATEGORY_BROWSABLE);
+    ListenableFuture<Void> futureResult = remoteActivityHelper.startRemoteActivity(remoteIntent, nodeId);
+    Futures.addCallback(
+      futureResult,
+      new FutureCallback<Void>() {
+        public void onSuccess(Void _result) {
+          Log.d(TAG, uri + ". Send open URI intent succeeded.");
+          replyCb.invoke(uri + ". Send open URI intent succeeded.");
+        }
+
+        public void onFailure(@NonNull Throwable thrown) {
+          Log.d(TAG, "Open URI request failed. \n reason : " + thrown.getMessage());
+          errorCb.invoke("Open URI request failed. \n reason : " + thrown.getMessage());
+        }
+      },
+      // causes the callbacks to be executed on the main (UI) thread
+      getReactApplicationContext().getMainExecutor()
+    );
   }
 
   @Override
