@@ -12,6 +12,7 @@ const _addListener: AddListener = (event, cb) => {
 
   switch (event) {
     case 'message':
+    case 'genuineMessage':
       break;
     default:
       throw new Error(`Unknown watch event "${event}"`);

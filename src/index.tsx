@@ -1,6 +1,11 @@
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
-import { sendMessage } from './messages';
+import { sendMessage, sendGenuineMessage } from './messages';
+import {
+  getCapableAndReachableNodes,
+  getNonCapableAndReachableNodes,
+} from './capability';
+import { openRemoteURI } from './intent';
 import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity';
 
 const LINKING_ERROR =
@@ -27,5 +32,13 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-export { sendMessage, watchEvents, WearConnectivity };
+export {
+  sendMessage,
+  sendGenuineMessage,
+  watchEvents,
+  getCapableAndReachableNodes,
+  getNonCapableAndReachableNodes,
+  openRemoteURI,
+  WearConnectivity,
+};
 export type { ReplyCallback, ErrorCallback };

@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
-import { sendMessage, watchEvents } from '../../../src/index';
+import {
+  sendMessage,
+  sendGenuineMessage,
+  watchEvents,
+} from '../../../src/index';
 import type { ReplyCallback, ErrorCallback } from '../../../src/index';
 
 function CounterScreen() {
@@ -21,10 +25,15 @@ function CounterScreen() {
     const json = { text: 'hello', event: 'message' };
     sendMessage(json, onSuccess, onError);
   };
+  const sendGenuineMessageToWear = () => {
+    sendGenuineMessage('/increment', onSuccess, onError);
+  };
 
   return (
     <View style={styles.container}>
       <Button title="Send Message" onPress={sendMessageToWear} />
+      <Text style={styles.text}>We don't support iOS</Text>
+      <Button title="Send Genuine Message" onPress={sendGenuineMessageToWear} />
       <Text style={styles.text}>We don't support iOS</Text>
     </View>
   );
