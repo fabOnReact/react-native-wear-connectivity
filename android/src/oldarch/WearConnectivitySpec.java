@@ -13,7 +13,7 @@ abstract class WearConnectivitySpec extends ReactContextBaseJavaModule {
   }
   public abstract void sendMessage(ReadableMap messageData, Callback replyCb, Callback errCb);
   public abstract void sendGenuineMessage(String messagePath, Callback replyCb, Callback errCb);
-  public abstract void getCapableAndReachableNodes(String messagePath, Callback replyCb, Callback errCb);
-  public abstract void getNonCapableAndReachableNodes(String messagePath, Callback replyCb, Callback errCb);
+  public abstract void getCapableAndReachableNodes(String capability, Callback replyCb, Callback errCb);
+  public abstract void getNonCapableAndReachableNodes(String capability, Callback replyCb, Callback errCb);
   public abstract void openRemoteURI(String uri, String nodeId, Callback replyCb, Callback errCb);
 }

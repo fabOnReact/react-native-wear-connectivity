@@ -106,9 +106,13 @@ You can now build the app with `yarn android`. JS fast-refresh and the other met
 ### Send Messages
 
 ```js
-import { sendMessage } from 'react-native-wear-connectivity';
+import {
+  sendMessage,
+  sendGenuineMessage,
+} from 'react-native-wear-connectivity';
 
 sendMessage({ text: 'Hello watch!' });
+sendGenuineMessage('/action');
 ```
 
 ### Receive Messages
@@ -119,6 +123,82 @@ import { watchEvents } from 'react-native-wear-connectivity';
 const unsubscribe = watchEvents.on('message', (message) => {
   console.log('received message from watch', message);
 });
+```
+
+### Get Nodes based on Capabilities
+
+On the watch app: res/values/wear.xml
+
+```xml
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:keep="@array/android_wear_capabilities">
+    <string-array name="android_wear_capabilities">
+        <item>my_android_capability</item>
+    </string-array>
+</resources>
+```
+
+On the react-native phone app:
+
+```js
+import {
+  getCapableAndReachableNodes,
+  getNonCapableAndReachableNodes,
+} from 'react-native-wear-connectivity';
+
+type AndroidNode = {
+  displayName: String,
+  id: String,
+};
+
+// https://developer.android.com/training/wearables/data/messages#advertise-capabilities
+getCapableAndReachableNodes(
+  'my_android_capability',
+  (capableNodes: AndroidNode[]) => {
+    capableNodes?.forEach(({ displayName, id }: AndroidNode) => {
+      // do what you need with non-capable nodes
+    });
+  },
+  (error: String) =>
+    console.error('message sent and received with error: ', error)
+);
+
+getNonCapableAndReachableNodes(
+  'my_android_capability',
+  (nonCapableNodes: AndroidNode[]) => {
+    nonCapableNodes?.forEach(({ displayName, id }: AndroidNode) => {
+      // do what you need with non-capable nodes
+    });
+  },
+  (error: String) =>
+    console.error('message sent and received with error: ', error)
+);
+```
+
+### Open URI remotely from the react-native app on the Android app
+
+```js
+import { openRemoteURI } from 'react-native-wear-connectivity';
+
+getNonCapableAndReachableNodes(
+  'sensorhub_wear',
+  (nonCapableNodes: AndroidNode[]) => {
+    nonCapableNodes?.forEach(({ displayName, id }: AndroidNode) => {
+      openRemoteURI(
+        `http://play.google.com/store/apps/details?id=my.app`,
+        id,
+        () => {
+          console.info(
+            'Open PlayStore Intent sent succesfully to ',
+            displayName
+          );
+        },
+        (error: String) =>
+          console.error('message sent and received with error: ', error)
+      );
+    });
+  }
+);
 ```
 
 ## FAQ
