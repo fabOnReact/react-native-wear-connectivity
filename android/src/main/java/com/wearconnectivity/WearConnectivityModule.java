@@ -150,8 +150,8 @@ public class WearConnectivityModule extends WearConnectivitySpec
     } catch (JSONException e) {
       Log.w(TAG, TAG + "  message: " + messageEvent.getPath());
       WritableMap map = new WritableNativeMap();
-      map.putString("text", messageEvent.getPath());
-      sendEvent(getReactApplicationContext(), "message", map);
+      map.putString("path", messageEvent.getPath());
+      sendEvent(getReactApplicationContext(), "genuineMessage", map);
     }
   }
 
