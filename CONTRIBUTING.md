@@ -18,74 +18,39 @@ To get started with the project, run `yarn` in the root directory to install the
 yarn
 ```
 
-To run the wearos and android mobile apps follow this [instructions][1], for iOS follow the same steps and use `pod install` and `yarn ios`.
+### Pair the Android and WearOS emulators
 
-[1]: https://github.com/fabOnReact/react-native-wear-connectivity?tab=readme-ov-file#how-to-create-a-wearos-app-using-react-native
+- Create a new emulator of type [WearOS Large round][22].
+- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
 
-> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development.
+### Build the Mobile App
 
-The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
+The first step is building the react-native Android mobile app.
 
-It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
-
-If you want to use Android Studio or XCode to edit the native code, you can open the `example/android` or `example/ios` directories respectively in those editors. To edit the Objective-C or Swift files, open `example/ios/WearConnectivityExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-wear-connectivity`.
-
-To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `react-native-wear-connectivity` under `Android`.
-
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
-
-```sh
-yarn typecheck
-yarn lint
+```bash
+cd example
+yarn install
+yarn start
+# Now build android
+yarn android
 ```
 
-To fix formatting errors, run the following:
+### Build the WearOS App
 
-```sh
-yarn lint --fix
+```bash
+cd watch-example
+yarn install
+yarn start --port=8082
 ```
 
-Remember to add tests for your change if possible. Run the unit tests by:
+Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+Now you can build the WearOS app with the command:
 
-```sh
-yarn test
+```bash
+yarn android
 ```
 
-### Linting and tests
-
-[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
-
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
-
-Our pre-commit hooks verify that the linter and tests pass when committing.
-
-### Publishing to npm
-
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
-
-### Scripts
-
-The `package.json` file contains various scripts for common tasks:
-
-- `yarn`: setup project by installing dependencies.
-- `yarn typecheck`: type-check files with TypeScript.
-- `yarn lint`: lint files with ESLint.
-- `yarn test`: run unit tests with Jest.
-
-### Sending a pull request
-
-> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
-
-When you're sending a pull request:
-
-- Prefer small pull requests focused on one change.
-- Verify that linters and tests are passing.
-- Review the documentation to make sure it looks good.
-- Follow the pull request template when opening a pull request.
-- For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
+[20]: https://reactnative.dev/docs/next/signed-apk-android
+[21]: https://developer.android.com/training/wearables/get-started/connect-phone
+[22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
+[23]: https://reactnative.dev/docs/debugging
