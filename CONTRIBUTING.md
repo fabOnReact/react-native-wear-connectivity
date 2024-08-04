@@ -41,7 +41,12 @@ yarn android
 cd watch-example
 yarn install
 yarn start --port=8082
-# Now build android
+```
+
+Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+Now you can build the WearOS app with the command:
+
+```bash
 yarn android
 ```
 
