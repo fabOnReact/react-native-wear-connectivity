@@ -17,6 +17,7 @@ https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415
 - [Example of implementation](#example-of-implementation)
 - [How to create a WearOS app using react-native](#how-to-create-a-wearos-app-using-react-native)
 - [API Documentation](#api-documentation)
+- [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
 ## Installation
@@ -120,40 +121,28 @@ const unsubscribe = watchEvents.on('message', (message) => {
 });
 ```
 
-## FAQ
+## FAQ on Troubleshooting Errors
 
 While some error messages are displayed on the metro server for the mobile or wearOS device (port 8082), other warnings are only available through logcat.
 To display them you need to open the android logcat tool from within Android Studio, where you can select the emulator and filter the messages by package name (more info in this [screenshot][41]).
 
-[41] https://github.com/user-attachments/assets/87016f71-782d-4f28-88dc-2c5d013eae2f
+[41]: https://github.com/user-attachments/assets/87016f71-782d-4f28-88dc-2c5d013eae2f
 
 #### Wearable App not installed on Mobile Device
 
-The following error display if the mobile device did not install the Wearable App, which is used to pair mobile device with wearOS device.
+The error displays on the Metro Server if the mobile device did not install the Wear App, which is used to pair mobile device with wearOS device.
+The Wear app is installed from Google Play and allows to pair the Wear Device with the Android Phone. Follow this [instructions][21] to pair WearOS emulator with Android Phone.
 
 ```
-WearConnectivityModule failed to retrieve nodes with error:
-java.util.concurrent.ExecutionException: com.google.android.gms.common.api.ApiException: 17: API: Wearable.API is not available on this device.
-Connection failed with: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+The Android mobile phone needs to install the Google Play Wear app.
 ```
-
-The Android Phone did not install the Wear OS app and did not pair with Wear OS device. Follow this [instructions][21].
 
 #### wearOS device too far for bluetooth connection
 
-Logcat (wearOS) includes the following warning when sending messages to the mobile device.
-There is no message in the Metro Server.
+Logcat (wearOS) shows the following log message when sending messages via bluetooth to a mobile device too far from the watch. The message is not displayed on the Metro Server.
 
 ```
 Pixel_8_Pro_API_35Device is too far for bluetooth connection.
-```
-
-#### The mobile or wearOS device is not paired with any bluetooth device
-
-Metro includes a message that no connected nodes are found message that no connected nodes are found. A node is a bluetooth device connected with another wearOS or Mobile device.
-
-```logcat
-No connected nodes found. client: com.google.android.gms.wearable.internal.zzgo@cc11cd connectedNodes: []
 ```
 
 ## Contributing
