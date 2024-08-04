@@ -42,7 +42,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
   private String ADD_CLIENT =
       TAG + "onMessageReceived listener added when activity is resumed. Client receives messages.";
   private String RETRIEVE_NODES_FAILED = TAG + "failed to retrieve nodes with error: ";
-  private String CONNECTED_DEVICE_IS_FAR = "Device is too far for bluetooth connection. ";
+  private String CONNECTED_DEVICE_IS_FAR = " Device is too far for bluetooth connection. ";
   private String INSTALL_GOOGLE_PLAY_WEARABLE = "The Android mobile phone needs to install the Google Play Wear app. ";
   private String MISSING_GOOGLE_PLAY_SERVICES = "GooglePlay Services not available.";
 
