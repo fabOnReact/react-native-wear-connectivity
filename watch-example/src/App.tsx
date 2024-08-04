@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 import type {
   ReplyCallback,
@@ -29,7 +29,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.textBackground}>
+      <View>
         <Text style={styles.count}>The count is {count}</Text>
       </View>
       <View style={styles.buttonContainer}>
