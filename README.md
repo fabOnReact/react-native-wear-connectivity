@@ -96,6 +96,10 @@ npx react-native@latest init YourMobileAppName
 
 You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem.
 
+You can find the instructions on how to build the example app for this project in the [CONTRIBUTING][43] section.
+
+[43]: https://github.com/fabOnReact/react-native-wear-connectivity/blob/main/CONTRIBUTING.md
+
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
 [22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
