@@ -1,79 +1,95 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Contributing
 
-# Getting Started
+Contributions are always welcome, no matter how large or small!
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+We want this community to be friendly and respectful to each other. Please follow it in all your interactions with the project. Before contributing, please read the [code of conduct](./CODE_OF_CONDUCT.md).
 
-## Step 1: Start the Metro Server
+## Development workflow
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- The library package in the root directory.
+- The mobile android app is in the `example/` directory.
+- The Wear OS android app is in the `watch-example/` directory.
 
-```bash
-# using npm
-npm start
+To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
 
-# OR using Yarn
-yarn start
+```sh
+yarn
 ```
 
-## Step 2: Start your Application
+### Pair the Android and WearOS emulators
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+- Create a new emulator of type [WearOS Large round][22].
+- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
 
-### For Android
+### Build the Mobile App
+
+The first step is building the react-native Android mobile app.
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
+cd example
+yarn install
+yarn start
+# Now build android
 yarn android
 ```
 
-### For iOS
+### Build the WearOS App
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+cd watch-example
+yarn install
+yarn start --port=8082
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+Now you can build the WearOS app with the command:
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+yarn android
+```
 
-## Step 3: Modifying your App
+[20]: https://reactnative.dev/docs/next/signed-apk-android
+[21]: https://developer.android.com/training/wearables/get-started/connect-phone
+[22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
+[23]: https://reactnative.dev/docs/debugging
 
-Now that you have successfully run the app, let's modify it.
+### Sending a pull request
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+When you're sending a pull request:
 
-## Congratulations! :tada:
+- Prefer small pull requests focused on one change.
+- Verify that linters and tests are passing.
+- Review the documentation to make sure it looks good.
+- Follow the pull request template when opening a pull request.
+- For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
 
-You've successfully run and modified your React Native App. :partying_face:
+### Linting and tests
 
-### Now what?
+[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
 
-# Troubleshooting
+Our pre-commit hooks verify that the linter and tests pass when committing.
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### Publishing to npm
 
-# Learn More
+We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
 
-To learn more about React Native, take a look at the following resources:
+To publish new versions, run the following:
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```sh
+yarn release
+```
+
+### Scripts
+
+The `package.json` file contains various scripts for common tasks:
+
+- `yarn`: setup project by installing dependencies.
+- `yarn typecheck`: type-check files with TypeScript.
+- `yarn lint`: lint files with ESLint.
+- `yarn test`: run unit tests with Jest.
