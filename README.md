@@ -34,12 +34,16 @@ npm install react-native-wear-connectivity
 
 ## Example of implementation
 
-Implementation of the above counter application.
+Example implementation of the above counter application for WearOS and Android Mobile.
 
 ```js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+
+function App() {
+  return <CounterScreen />;
+}
 
 function CounterScreen() {
   const [count, setCount] = useState(0);
@@ -63,12 +67,34 @@ function CounterScreen() {
   };
 
   return (
-    <View>
-      <Text>{count}</Text>
+    <View style={styles.container}>
       <Button title="increase counter" onPress={sendMessageToWear} />
+      <Text style={styles.count}>The count is {count}</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FDFDFD',
+  },
+  count: {
+    borderRadius: 3,
+    padding: 5,
+    backgroundColor: '#9C9A9D',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    marginTop: 20,
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '500',
+  },
+});
+
+export default App;
 ```
 
 ## How to create a WearOS app using react-native
@@ -99,7 +125,6 @@ You can now build the app with `yarn android`. JS fast-refresh and the other met
 You can find the instructions on how to build the example app for this project in the [CONTRIBUTING][43] section.
 
 [43]: https://github.com/fabOnReact/react-native-wear-connectivity/blob/main/CONTRIBUTING.md
-
 [20]: https://reactnative.dev/docs/next/signed-apk-android
 [21]: https://developer.android.com/training/wearables/get-started/connect-phone
 [22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
