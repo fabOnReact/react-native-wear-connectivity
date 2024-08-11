@@ -37,7 +37,7 @@ cd YourFolder
 yarn install
 ```
 
-Run the app on the WearOS Emulator:
+Run the app on the Android Emulator:
 
 ```sh
 yarn rnv run -p android
