@@ -13,14 +13,57 @@ https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415
 
 # Table of Contents
 
-- [Installation](#installation)
+- [Installation with renative](#installation-with-renative)
+- [Installation with react-native](#installation-with-react-native)
 - [Example of implementation](#example-of-implementation)
-- [How to create a WearOS app using react-native](#how-to-create-a-wearos-app-using-react-native)
 - [API Documentation](#api-documentation)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
-## Installation
+## Installation with renative
+
+Create a new renative app for android and wearos:
+
+```sh
+npx rnv new
+```
+
+Change folder to the newly created app and run yarn install:
+
+```sh
+cd YourFolder
+yarn install
+```
+
+Run the app on the WearOS Emulator:
+
+```sh
+yarn rnv run -p android
+```
+
+Run the app on the WearOS Emulator:
+
+```sh
+yarn rnv run -p androidwear -d
+```
+
+Add the dependency `react-native-wear-connectivity` to your [renative.json](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example/blob/main/renative.json):
+
+```json
+"plugins": {
+  "react-native-wear-connectivity": {
+    "version": "^0.1.9"
+  }
+}
+```
+
+- Pair the Android emulator with the Wear OS emulator ([instructions][21]).
+- Implement the [example](#example-of-implementation) in `src/app/index.tsx`.
+
+I published an [example](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example) of an app implemented with renative.
+For more information refer to the official renative [documentation](https://next.renative.org) and [github repository](https://github.com/flexn-io/renative).
+
+## Installation with React Native
 
 ```sh
 yarn add react-native-wear-connectivity
@@ -31,6 +74,39 @@ or
 ```sh
 npm install react-native-wear-connectivity
 ```
+
+This is a detailed explanation on how to create a WearOS app using react-native:
+
+- Create a new react-native app using the same name as your Mobile app.
+  It is important to use the same name because both apps need to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
+
+```sh
+npx react-native@latest init YourMobileAppName
+```
+
+- Add the following line to the new project AndroidManifest (file ):
+
+```xml
+<!-- this file is located at android/app/src/main/AndroidManifest.xml -->
+<uses-feature android:name="android.hardware.type.watch" />
+```
+
+- Create a new emulator of type [WearOS Large round][22].
+- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
+- Start the metro server on port 8082 with `yarn start --port=8082`
+- Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
+- Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
+- **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
+
+You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem.
+
+You can find the instructions on how to build the example app for this project in the [CONTRIBUTING][43] section.
+
+[43]: https://github.com/fabOnReact/react-native-wear-connectivity/blob/main/CONTRIBUTING.md
+[20]: https://reactnative.dev/docs/next/signed-apk-android
+[21]: https://developer.android.com/training/wearables/get-started/connect-phone
+[22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
+[23]: https://reactnative.dev/docs/debugging
 
 ## Example of implementation
 
@@ -96,39 +172,6 @@ const styles = StyleSheet.create({
 
 export default App;
 ```
-
-## How to create a WearOS app using react-native
-
-- Create a new react-native app using the same name as your Mobile app.
-  It is important to use the same name because both apps need to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
-
-```sh
-npx react-native@latest init YourMobileAppName
-```
-
-- Add the following line to the new project AndroidManifest (file ):
-
-```xml
-<!-- this file is located at android/app/src/main/AndroidManifest.xml -->
-<uses-feature android:name="android.hardware.type.watch" />
-```
-
-- Create a new emulator of type [WearOS Large round][22].
-- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
-- Start the metro server on port 8082 with `yarn start --port=8082`
-- Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
-- Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
-- **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
-
-You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem.
-
-You can find the instructions on how to build the example app for this project in the [CONTRIBUTING][43] section.
-
-[43]: https://github.com/fabOnReact/react-native-wear-connectivity/blob/main/CONTRIBUTING.md
-[20]: https://reactnative.dev/docs/next/signed-apk-android
-[21]: https://developer.android.com/training/wearables/get-started/connect-phone
-[22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
-[23]: https://reactnative.dev/docs/debugging
 
 ## API Documentation
 
