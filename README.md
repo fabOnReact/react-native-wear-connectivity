@@ -22,6 +22,8 @@ https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415
 
 ## Installation with renative
 
+The app generated with this implementation is available [here](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example).
+
 Create a new renative app for android and wearos:
 
 ```sh
@@ -44,7 +46,7 @@ yarn rnv run -p android
 Run the app on the WearOS Emulator:
 
 ```sh
-yarn rnv run -p androidwear -d
+yarn rnv run -p androidwear
 ```
 
 Add the dependency `react-native-wear-connectivity` to your [renative.json](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example/blob/main/renative.json):
@@ -58,9 +60,8 @@ Add the dependency `react-native-wear-connectivity` to your [renative.json](http
 ```
 
 - Pair the Android emulator with the Wear OS emulator ([instructions][21]).
-- Implement the [example](#example-of-implementation) in `src/app/index.tsx`.
+- Implement the [example](#example-of-implementation) in [src/app/index.tsx](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example/blob/main/src/app/index.tsx).
 
-I published an [example](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example) of an app implemented with renative.
 For more information refer to the official renative [documentation](https://next.renative.org) and [github repository](https://github.com/flexn-io/renative).
 
 ## Installation with React Native
