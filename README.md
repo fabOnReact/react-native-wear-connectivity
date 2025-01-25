@@ -4,7 +4,7 @@ Allows you to connect React Native Mobile apps with WearOS.
 
 https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
 
-**Note**: This library allows you to write your Android WearOS and Mobile apps in React Native, refer to [react-native-watch-connectivity][2] for Apple Watch development.
+**Note**: Refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
 [1]: https://wearos.google.com
 [2]: https://github.com/mtford90/react-native-watch-connectivity
@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
 
 - [Installation](#installation)
 - [React Native API Documentation](#react-native-api-documentation)
-- [How to run the example](how-to-run-the-example)
+- [How to run the example](#how-to-run-the-example)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
@@ -168,7 +168,7 @@ Pixel_8_Pro_API_35Device is too far for bluetooth connection.
 
 #### Failed to deliver message to AppKey
 
-Logcat shows the error messages when the WearOS and Mobile apps are not signed with the same key, or they do not share the same package name and applicationId (more info [here](url)).
+Logcat shows the error messages when the WearOS and Mobile apps are not signed with the same key, or they do not share the same package name and applicationId (more info [here](https://github.com/fabOnReact/react-native-wear-connectivity?tab=readme-ov-file#both-apps-share-the-same-package-name-and-applicationid)).
 
 ```
 Failed to deliver message to AppKey
