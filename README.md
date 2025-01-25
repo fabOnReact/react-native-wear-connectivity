@@ -2,7 +2,7 @@
 
 Allows you to connect React Native Mobile apps with WearOS.
 
-https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415fab47-7d76-4c72-80b9-c0d19ec25a49
+https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
 
 **Note**: This library allows you to write your Android WearOS and Mobile apps in React Native, refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
@@ -11,59 +11,13 @@ https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415
 
 # Table of Contents
 
-- [Connecting a Jetpack Compose WearOS app to a React Native Mobile App]()
-- [Using renative to build WearOS and Mobile App](#using-renative-to-build-wearos-and-mobile-app)
-- [Using react-native to build WearOS and Mobile App](#installation-with-react-native)
-- [Example of implementation](#example-of-implementation)
-- [API Documentation](#api-documentation)
+- [Installation](#installation)
+- [React Native API Documentation](#react-native-api-documentation)
+- [How to run the example](how-to-run-the-example)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
-## Using renative to build WearOS and Mobile App
-
-The app generated with this implementation is available [here](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example).
-
-Create a new renative app for android and wearos:
-
-```sh
-npx rnv new
-```
-
-Change folder to the newly created app and run yarn install:
-
-```sh
-cd YourFolder
-yarn install
-```
-
-Run the app on the Android Emulator:
-
-```sh
-yarn rnv run -p android
-```
-
-Run the app on the WearOS Emulator:
-
-```sh
-yarn rnv run -p androidwear
-```
-
-Add the dependency `react-native-wear-connectivity` to your [renative.json](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example/blob/main/renative.json):
-
-```json
-"plugins": {
-  "react-native-wear-connectivity": {
-    "version": "^0.1.9"
-  }
-}
-```
-
-- Pair the Android emulator with the Wear OS emulator ([instructions][21]).
-- Implement the [example](#example-of-implementation) in [src/app/index.tsx](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example/blob/main/src/app/index.tsx).
-
-For more information refer to the official renative [documentation](https://next.renative.org) and [github repository](https://github.com/flexn-io/renative).
-
-## Installation with React Native
+## Installation
 
 ```sh
 yarn add react-native-wear-connectivity
@@ -75,105 +29,7 @@ or
 npm install react-native-wear-connectivity
 ```
 
-This is a detailed explanation on how to create a WearOS app using react-native:
-
-- Create a new react-native app using the same name as your Mobile app.
-  It is important to use the same name because both apps need to share the same package name (AndroidManifest, build.gradle, the project files) and applicationId (build.gradle).
-
-```sh
-npx react-native@latest init YourMobileAppName
-```
-
-- Add the following line to the new project AndroidManifest (file ):
-
-```xml
-<!-- this file is located at android/app/src/main/AndroidManifest.xml -->
-<uses-feature android:name="android.hardware.type.watch" />
-```
-
-- Create a new emulator of type [WearOS Large round][22].
-- Pair the Android emulator with the Wear OS emulator. Follow this [instructions][21].
-- Start the metro server on port 8082 with `yarn start --port=8082`
-- Build the project with `yarn android`, open the [react native dev menu][23] and change the bundle location to `your-ip:8082` (for ex. `192.168.18.2:8082`).
-- Repeat the same steps for the Android Phone Emulator and use a different port (for ex. 8081).
-- **Important Note**: Before publishing to Google Play, make sure that both apps are signed using the same key (instructions [here][20])
-
-You can now build the app with `yarn android`. JS fast-refresh and the other metro functionalities work without problem.
-
-You can find the instructions on how to build the example app for this project in the [CONTRIBUTING][43] section.
-
-[43]: https://github.com/fabOnReact/react-native-wear-connectivity/blob/main/CONTRIBUTING.md
-[20]: https://reactnative.dev/docs/next/signed-apk-android
-[21]: https://developer.android.com/training/wearables/get-started/connect-phone
-[22]: https://gist.github.com/assets/24992535/f6cb9f84-dc50-492b-963d-6d9e9396f451 'wear os large round'
-[23]: https://reactnative.dev/docs/debugging
-
-## Example of implementation
-
-Example implementation of the above counter application for WearOS and Android Mobile.
-
-```js
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
-
-function App() {
-  return <CounterScreen />;
-}
-
-function CounterScreen() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const unsubscribe = watchEvents.on('message', () => {
-      setCount((prevCount) => prevCount + 1);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const onSuccess = (result) => console.log(result);
-  const onError = (error) => console.log(error);
-
-  const sendMessageToWear = () => {
-    const json = { text: 'hello' };
-    sendMessage(json, onSuccess, onError);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Button title="increase counter" onPress={sendMessageToWear} />
-      <Text style={styles.count}>The count is {count}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FDFDFD',
-  },
-  count: {
-    borderRadius: 3,
-    padding: 5,
-    backgroundColor: '#9C9A9D',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    marginTop: 20,
-    color: 'white',
-    fontSize: 20,
-    fontWeight: '500',
-  },
-});
-
-export default App;
-```
-
-## API Documentation
+## React Native API Documentation
 
 ### Send Messages
 
@@ -191,6 +47,99 @@ import { watchEvents } from 'react-native-wear-connectivity';
 const unsubscribe = watchEvents.on('message', (message) => {
   console.log('received message from watch', message);
 });
+```
+
+# How to run the example
+
+I suggest you to try to run the example before doing your own implementation. You can try to modify the WearOS example and connect it to your mobile app following this instructions.
+
+### How to run the React Native Mobile App example
+
+You need to clone the `react-native-wear-connectivity` project, build and run the mobile app example.
+
+```
+git clone https://github.com/fabOnReact/react-native-wear-connectivity
+cd react-native-wear-connectivity 
+yarn
+cd example
+yarn
+yarn android
+```
+
+### How to run the Jetpack Compose WearOS example
+
+1) Clone the WearOS Jetpack Compose [example](https://github.com/fabOnReact/wearos-communication-with-rn)
+```
+git clone https://github.com/fabOnReact/wearos-communication-with-rn
+```
+2) Open the project with android studio, build and run it on an [Android WearOS emulator](https://github-production-user-asset-6210df.s3.amazonaws.com/24992535/303911079-f6cb9f84-dc50-492b-963d-6d9e9396f451.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250125%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250125T110158Z&X-Amz-Expires=300&X-Amz-Signature=4bd2be95943124fe34fb13e6a54e9a2fe8a9c06d1eb8afdf005ce02cf43c90d1&X-Amz-SignedHeaders=host).
+3) Now you can pair the WearOS emulator with the Android Mobile Emulator as explained in these [instructions](https://developer.android.com/training/wearables/get-started/connect-phone).
+
+**Make sure you respect this requirements:**
+
+### Both apps share the same package name and applicationId
+
+Generate the app using the same package name and applicationId of the React Native Android App otherwise follow [these instructions](https://stackoverflow.com/a/29092698/7295772) to rename package name (in AndroidManifest, build.gradle, the project files) and applicationId in build.gradle.
+
+### Both apps are signed with the same key
+
+Make sure both apps use the same signing key. You can verify it as follows:
+
+**Jetpack Compose App WearOS app** (no react-native)
+- Verify that your build.gradle.kts on WearOS uses the same certificate from the Mobile App. The WearOS example configurations are [here](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/build.gradle.kts#L21-L38) for our WearOS Jetpack Compose example.
+- Make sure the two projects use the same keystore. The WearOS project uses the same  [debug.keystore](https://github.com/fabOnReact/wearos-communication-with-rn/blob/main/app/debug.keystore) of the Mobile App.
+
+In our example, the gradle configs set the singingConfigs to use the same file debug.keystore from the React Native Mobile App. The same configuration needs to be done for the release/production key.
+
+**Android Mobile React Native app**
+- Make sure both apps are using the same key, in our example the singingConfigs for the React Native Mobile App are configured [here](https://github.com/fabOnReact/react-native-wear-connectivity/blob/2f936622422e197c22bef228b44eb24b46c878ae/example/android/app/build.gradle#L78-L104) and the [debug.keystore](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/debug.keystore) is the same from the WearOS app.
+
+### How to implement the Jetpack Compose WearOS app
+
+**Sending messages from Jetpack Compose WearOS to React Native Mobile Device**
+
+[sendMessageToClient](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/MainActivity.kt#L75-L87) is implemented on Jetpack Compose WearOS to send messages to the React Native Mobile App. `sendMessageToClient` is triggered on WearOS when [clicking](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/WearApp.kt#L31) on the watch Button Component.
+
+```kotlin
+fun sendMessageToClient(node: Node) {
+    val jsonObject = JSONObject().apply {
+        put("event", "message")
+        put("text", "hello")
+    }
+    try {
+        val sendTask = Wearable.getMessageClient(applicationContext).sendMessage(
+            node.getId(), jsonObject.toString(), null
+        )
+    } catch (e: Exception) {
+        Log.w("WearOS: ", "e $e")
+    }
+}
+```
+
+The WearOS `sendMessageToClient` function retrieves the devices connected via bluetooth to the WearOS device, and sends a JSON payload to those devices. 
+
+The payload is:
+
+```javascript
+{
+   event: "message",
+   text: "this is the message parameter",
+}
+```
+
+The React Native Mobile App uses `watchEvents.on(eventName, callback)` to listen to the `message` event and to increase the number displayed in the React Native Mobile App. The implementation in the React Native Mobile example is in [CounterScreen/index.android.tsx](https://github.com/fabOnReact/react-native-wear-connectivity/blob/2f936622422e197c22bef228b44eb24b46c878ae/example/src/CounterScreen/index.android.tsx#L14-L16).
+
+```javascript
+useEffect(() => {
+  const unsubscribe = watchEvents.on('message', () => {
+    setCount((prevCount) => prevCount + 1);
+  });
+
+
+  return () => {
+    unsubscribe();
+  };
+}, []);
 ```
 
 ## FAQ on Troubleshooting Errors
@@ -215,6 +164,14 @@ Logcat (wearOS) shows the following log message when sending messages via blueto
 
 ```
 Pixel_8_Pro_API_35Device is too far for bluetooth connection.
+```
+
+#### Failed to deliver message to AppKey
+
+Logcat shows the error messages when the WearOS and Mobile apps are not signed with the same key, or they do not share the same package name and applicationId (more info [here](url)).
+
+```
+Failed to deliver message to AppKey
 ```
 
 ## Contributing
