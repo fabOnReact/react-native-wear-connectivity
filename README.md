@@ -13,6 +13,7 @@ https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
 
 - [Installation](#installation)
 - [React Native API Documentation](#react-native-api-documentation)
+- [Jetpack Compose API Documentation](#jetpack-compose-api-documentation)
 - [How to run the example](#how-to-run-the-example)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
@@ -49,11 +50,56 @@ const unsubscribe = watchEvents.on('message', (message) => {
 });
 ```
 
+## Jetpack Compose API Documentation
+
+### Send Messages
+
+```kotlin
+import androidx.activity.ComponentActivity
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.Wearable
+import org.json.JSONObject
+import com.google.android.gms.wearable.Node
+
+class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {  
+  fun sendMessageToClient(node: Node) {
+      val jsonObject = JSONObject().apply {
+          put("event", "message")
+          put("text", "hello")
+      }
+      val sendTask = Wearable.getMessageClient(applicationContext).sendMessage(
+          node.getId(), jsonObject.toString(), null
+      )
+  }
+}
+```
+
+### Receive Messages
+
+```kotlin
+import androidx.activity.ComponentActivity
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
+import org.json.JSONObject
+import androidx.compose.runtime.mutableStateOf
+
+class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {
+  var count by mutableStateOf(0)
+  override fun onMessageReceived(messageEvent: MessageEvent) {
+      val jsonObject = JSONObject(messageEvent.path)
+      val event = jsonObject.getString("event")
+      if (event.equals("message")) {
+          count = count + 1;
+      }
+  }
+}
+```
+
 # How to run the example
 
 I suggest you to try to run the example before doing your own implementation. You can try to modify the WearOS example and connect it to your mobile app following this instructions.
 
-### How to run the React Native Mobile App example
+**How to run the React Native Mobile App example**
 
 You need to clone the `react-native-wear-connectivity` project, build and run the mobile app example.
 
@@ -66,7 +112,7 @@ yarn
 yarn android
 ```
 
-### How to run the Jetpack Compose WearOS example
+**How to run the Jetpack Compose WearOS example**
 
 1) Clone the WearOS Jetpack Compose [example](https://github.com/fabOnReact/wearos-communication-with-rn)
 ```
@@ -94,8 +140,7 @@ In our example, the gradle configs set the singingConfigs to use the same file d
 **Android Mobile React Native app**
 - Make sure both apps are using the same key, in our example the singingConfigs for the React Native Mobile App are configured [here](https://github.com/fabOnReact/react-native-wear-connectivity/blob/2f936622422e197c22bef228b44eb24b46c878ae/example/android/app/build.gradle#L78-L104) and the [debug.keystore](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/debug.keystore) is the same from the WearOS app.
 
-### How to implement the Jetpack Compose WearOS app
-
+### Detailed explanation of the Implementation
 **Sending messages from Jetpack Compose WearOS to React Native Mobile Device**
 
 [sendMessageToClient](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/MainActivity.kt#L75-L87) is implemented on Jetpack Compose WearOS to send messages to the React Native Mobile App. `sendMessageToClient` is triggered on WearOS when [clicking](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/WearApp.kt#L31) on the watch Button Component.
@@ -141,6 +186,34 @@ useEffect(() => {
   };
 }, []);
 ```
+
+**Sending messages from React Native Mobile Device to Jetpack Compose WearOS**
+
+The React Native Mobile App Example sends messages to the WearOS Jetpack Compose example with [sendMessage](https://github.com/fabOnReact/react-native-wear-connectivity/blob/2f936622422e197c22bef228b44eb24b46c878ae/example/src/CounterScreen/index.android.tsx#L29-L33).
+
+```javascript
+const sendMessageToWear = () => {
+  setDisabled(true);
+  const json = { text: 'hello' };
+  sendMessage(json, onSuccess, onError);
+};
+```
+
+The Jetpack Compose WearOS app implements [onMessageReceived](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/MainActivity.kt#L89-L95) and updates the Counter number on the screen when the message is received:
+
+```kotlin
+override fun onMessageReceived(messageEvent: MessageEvent) {
+    val jsonObject = JSONObject(messageEvent.path)
+    val event = jsonObject.getString("event")
+    if (event.equals("message")) {
+        count = count + 1;
+    }
+}
+```
+
+onMessageReceived modifies the [count state variable](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/MainActivity.kt#L31) and re-renders the Counter component with a new [text](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/WearApp.kt#L46).
+
+You can copy the [implementation](https://github.com/fabOnReact/wearos-communication-with-rn/tree/main/app/src/main/java/com/wearconnectivityexample/presentation) from the example, or follow the [instructions above](https://github.com/fabOnReact/wearos-communication-with-rn?tab=readme-ov-file#both-apps-share-the-same-package-name-and-applicationid) to rename package name, application id and change the signing key to pair that example with your React Native App.
 
 ## FAQ on Troubleshooting Errors
 
