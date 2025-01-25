@@ -1,8 +1,6 @@
 # react-native-wear-connectivity
 
-- Create a [Wear OS][1] app using react-native
-- Connect two react-native apps (Wear OS and Android mobile app)
-- **Both apps are written in react-native**
+Allows you to connect React Native Mobile apps with WearOS.
 
 https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415fab47-7d76-4c72-80b9-c0d19ec25a49
 
@@ -13,14 +11,15 @@ https://github.com/fabOnReact/react-native-wear-connectivity/assets/24992535/415
 
 # Table of Contents
 
-- [Installation with renative](#installation-with-renative)
-- [Installation with react-native](#installation-with-react-native)
+- [Connecting a Jetpack Compose WearOS app to a React Native Mobile App]()
+- [Using renative to build WearOS and Mobile App](#using-renative-to-build-wearos-and-mobile-app)
+- [Using react-native to build WearOS and Mobile App](#installation-with-react-native)
 - [Example of implementation](#example-of-implementation)
 - [API Documentation](#api-documentation)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
-## Installation with renative
+## Using renative to build WearOS and Mobile App
 
 The app generated with this implementation is available [here](https://github.com/fabOnReact/react-native-wear-connectivity-renative-example).
 
