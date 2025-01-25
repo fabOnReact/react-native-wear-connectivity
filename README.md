@@ -61,7 +61,10 @@ import com.google.android.gms.wearable.Wearable
 import org.json.JSONObject
 import com.google.android.gms.wearable.Node
 
-class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {  
+class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {
+
+  // MainActivity implementation ...
+
   fun sendMessageToClient(node: Node) {
       val jsonObject = JSONObject().apply {
           put("event", "message")
@@ -85,6 +88,9 @@ import androidx.compose.runtime.mutableStateOf
 
 class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {
   var count by mutableStateOf(0)
+
+  // MainActivity implementation ...
+
   override fun onMessageReceived(messageEvent: MessageEvent) {
       val jsonObject = JSONObject(messageEvent.path)
       val event = jsonObject.getString("event")
@@ -97,7 +103,7 @@ class MainActivity : ComponentActivity(), MessageClient.OnMessageReceivedListene
 
 # How to run the example
 
-I suggest you to try to run the example before doing your own implementation. You can try to modify the WearOS example and connect it to your mobile app following this instructions.
+I suggest you to try to run the example before doing your own implementation. You can try to modify the WearOS example and connect it to your React Native Mobile app following this instructions.
 
 **How to run the React Native Mobile App example**
 
