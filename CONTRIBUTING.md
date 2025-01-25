@@ -105,7 +105,7 @@ override fun onMessageReceived(messageEvent: MessageEvent) {
 
 onMessageReceived modifies the [count state variable](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/MainActivity.kt#L31) and re-renders the Counter component with a new [text](https://github.com/fabOnReact/wearos-communication-with-rn/blob/371e6c5862d49ccbff08ab951a26284a216daf97/app/src/main/java/com/wearconnectivityexample/presentation/WearApp.kt#L46).
 
-You can copy the [implementation](https://github.com/fabOnReact/wearos-communication-with-rn/tree/main/app/src/main/java/com/wearconnectivityexample/presentation) from the example, or follow the instructions above to rename package name, application id and change the signing key to pair that example with your React Native App.
+You can copy the [implementation](https://github.com/fabOnReact/wearos-communication-with-rn/tree/main/app/src/main/java/com/wearconnectivityexample/presentation) from the example, or follow the [instructions above](https://github.com/fabOnReact/wearos-communication-with-rn?tab=readme-ov-file#both-apps-share-the-same-package-name-and-applicationid) to rename package name, application id and change the signing key to pair that example with your React Native App.
 
 
 ### Sending a pull request
