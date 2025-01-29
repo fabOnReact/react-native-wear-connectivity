@@ -27,9 +27,19 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.android.gms.common.GoogleApiAvailability;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import com.facebook.react.HeadlessJsTaskService;
+import android.content.Intent;  // For Intent class
+import android.os.Bundle;       // For Bundle class
+import com.facebook.react.bridge.ReactApplicationContext;  // For ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule;  // If you haven't already imported this
 
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
+
+  private static ReactApplicationContext reactContext;
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "react-native-wear-connectivity ";
   private final MessageClient client;
@@ -48,6 +58,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   WearConnectivityModule(ReactApplicationContext context) {
     super(context);
+    reactContext = context;
     context.addLifecycleEventListener(this);
     client = Wearable.getMessageClient(context);
     Log.d(TAG, CLIENT_ADDED);
@@ -118,13 +129,39 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
+  @Override
+  public void onMessageReceived(MessageEvent messageEvent) {
+    Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
+    Bundle bundle = new Bundle();
+
+    bundle.putString("foo", "bar");
+    service.putExtras(bundle);
+
+    Log.w("TESTING ", "startForegroundService" );
+    getReactApplicationContext().startForegroundService(service);
+    HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
+  }
+
+  /*
   public void onMessageReceived(MessageEvent messageEvent) {
     try {
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
       FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
-      sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+      // sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+
+      Data inputData = new Data.Builder()
+        .putString("messagePath", messageEvent.getPath())
+        .build();
+
+      HeadlessJsTaskService.acquireWakeLockNow(reactContext);
+
+      OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MessageWorker.class)
+            .setInputData(inputData)
+            .build();
+
+      WorkManager.getInstance(getReactApplicationContext()).enqueue(workRequest);
     } catch (JSONException e) {
       FLog.w(
           TAG,
@@ -135,12 +172,17 @@ public class WearConnectivityModule extends WearConnectivitySpec
               + e);
     }
   }
+  */
 
   private void sendEvent(
       ReactContext reactContext, String eventName, @Nullable WritableMap params) {
     reactContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
         .emit(eventName, params);
+  }
+
+  public static ReactApplicationContext getReactContext() {
+    return reactContext;
   }
 
   @Override
@@ -153,13 +195,13 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostPause() {
-    Log.d(TAG, REMOVE_CLIENT);
-    client.removeListener(this);
+    // Log.d(TAG, REMOVE_CLIENT);
+    // client.removeListener(this);
   }
 
   @Override
   public void onHostDestroy() {
-    Log.d(TAG, REMOVE_CLIENT);
-    client.removeListener(this);
+    // Log.d(TAG, REMOVE_CLIENT);
+    // client.removeListener(this);
   }
 }
