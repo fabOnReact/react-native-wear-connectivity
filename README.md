@@ -228,7 +228,7 @@ You can copy the [implementation](https://github.com/fabOnReact/wearos-communica
 
 ## Alternative methods of installation
 
-The instructions for writing the WearOS apps with react-native are available at [alternative-installation.md](docs/alternative-installation.md). React Native does not officially support WearOS, some essential components like CircularScrollView are not available in React Native. More info in Issues https://github.com/fabOnReact/react-native-wear-connectivity/issues/12 and https://github.com/andrew-levy/jetpack-compose-react-native/issues/9#issuecomment-2558029400.
+The instructions for writing the WearOS apps with react-native are available at [alternative-installation.md](docs/alternative-installation.md). React Native does not officially support WearOS, some essential components like CircularScrollView are not available in React Native. More info in Issues https://github.com/fabOnReact/react-native-wear-connectivity/issues/12 and https://github.com/andrew-levy/jetpack-compose-react-native/issues/9.
 
 ## FAQ on Troubleshooting Errors
 
