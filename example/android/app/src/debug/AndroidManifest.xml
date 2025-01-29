@@ -5,5 +5,8 @@
     <application
         android:usesCleartextTraffic="true"
         tools:targetApi="28"
-        tools:ignore="GoogleAppIndexingWarning"/>
+        tools:ignore="GoogleAppIndexingWarning">
+<service android:name="com.wearconnectivity.MyTaskService"
+         android:permission="android.permission.BIND_JOB_SERVICE" />
+</application>
 </manifest>
