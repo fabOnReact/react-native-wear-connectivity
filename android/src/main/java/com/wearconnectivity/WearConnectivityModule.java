@@ -133,20 +133,20 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @RequiresApi(api = Build.VERSION_CODES.O)
   @Override
   public void onMessageReceived(MessageEvent messageEvent) {
-    ReactApplicationContext context = reactContext;
+    ReactApplicationContext context = getReactContext();
     try {
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
       FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
       if (isAppOnForeground(context)) {
-        sendEvent(reactContext, event, messageAsWritableMap);
+        sendEvent(getReactContext(), event, messageAsWritableMap);
       } else {
-        Intent service = new Intent(reactContext, com.wearconnectivity.WearConnectivityTask.class);
+        Intent service = new Intent(getReactContext(), com.wearconnectivity.WearConnectivityTask.class);
         Bundle bundle = Arguments.toBundle(messageAsWritableMap);
         service.putExtras(bundle);
-        reactContext.startForegroundService(service);
-        HeadlessJsTaskService.acquireWakeLockNow(reactContext);
+        getReactContext().startForegroundService(service);
+        HeadlessJsTaskService.acquireWakeLockNow(getReactContext());
       }
     } catch (JSONException e) {
       FLog.w(
