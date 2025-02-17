@@ -31,12 +31,24 @@ or
 npm install react-native-wear-connectivity
 ```
 
-Add the following entry to your `android/app/src/main/AndroidManifest.xml` (example available [here](example/android/app/src/main/AndroidManifest.xml)):
+Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full example of AndroidManifest available [here](example/android/app/src/main/AndroidManifest.xml)):
 
 ```xml
-<service android:name="com.wearconnectivity.WearConnectivityTask"
-    android:permission="android.permission.BIND_JOB_SERVICE"
-    android:exported="true" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ADD THIS PERMISSIONS -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- END OF THE CHANGES -->
+
+    <application>
+        <!-- ADD THIS SERVICE -->
+        <service android:name="com.wearconnectivity.WearConnectivityTask"
+          android:permission="android.permission.BIND_JOB_SERVICE"
+          android:exported="true" />
+        <!-- END OF THE CHANGES -->
+    </application>
+</manifest>
 ```
 
 ## React Native API Documentation

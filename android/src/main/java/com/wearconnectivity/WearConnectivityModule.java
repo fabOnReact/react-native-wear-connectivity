@@ -33,14 +33,9 @@ import org.json.JSONObject;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import androidx.annotation.RequiresApi;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 import com.facebook.react.HeadlessJsTaskService;
-import android.content.Intent;  // For Intent class
-import android.os.Bundle;       // For Bundle class
-import com.facebook.react.bridge.ReactApplicationContext;  // For ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule;  // If you haven't already imported this
+import android.content.Intent;
+import android.os.Bundle;
 
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
@@ -204,7 +199,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostPause() {
-    Log.d(TAG, REMOVE_CLIENT);
+    // Log.d(TAG, REMOVE_CLIENT);
     // removed this to allow to send updates when app is in the background
     // client.removeListener(this);
   }
