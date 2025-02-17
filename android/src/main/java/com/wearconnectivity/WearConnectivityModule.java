@@ -1,5 +1,7 @@
 package com.wearconnectivity;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -131,17 +133,44 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onMessageReceived(MessageEvent messageEvent) {
-    Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
-    Bundle bundle = new Bundle();
+    Context context = getReactApplicationContext();
+    if (!isAppOnForeground(context)) {
+      Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
+      Bundle bundle = new Bundle();
 
-    bundle.putString("foo", "bar");
-    service.putExtras(bundle);
+      bundle.putString("foo", "bar");
+      service.putExtras(bundle);
 
-    Log.w("TESTING ", "startForegroundService" );
-    getReactApplicationContext().startForegroundService(service);
-    HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
+      Log.w("TESTING ", "startForegroundService");
+      getReactApplicationContext().startForegroundService(service);
+      HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
+    } else {  // Optionally handle messages differently when the app is in the foreground
+      Log.w("TESTING", "App is in foreground; handling message without starting Headless JS service");
+      // For example, you might send the event directly to JS:
+      // sendEvent(getReactApplicationContext(), "yourEventName", yourWritableMap);
+    }
   }
 
+  /**
+   * Checks if the app is in the foreground.
+   */
+  private boolean isAppOnForeground(Context context) {
+    ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+    if (appProcesses == null) {
+      return false;
+    }
+    final String packageName = context.getPackageName();
+    for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+      Log.w("TESTING ", "packageName: " + packageName);
+      Log.w("TESTING ", "appProcess.processName: " + appProcess.processName);
+      if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+              appProcess.processName.equals(packageName)) {
+        return true;
+      }
+    }
+    return false;
+  }
   /*
   public void onMessageReceived(MessageEvent messageEvent) {
     try {
