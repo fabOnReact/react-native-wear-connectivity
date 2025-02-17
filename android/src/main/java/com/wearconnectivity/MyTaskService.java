@@ -58,7 +58,7 @@ public class MyTaskService extends HeadlessJsTaskService {
               "SomeTaskName",             // Name of the task
               Arguments.fromBundle(extras), // Data passed to the task
               5000,                       // Timeout in milliseconds
-              false                       // Task can run in the background
+              true                       // Task can run in the background
       );
     }
     return null;

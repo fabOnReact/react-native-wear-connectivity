@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -136,10 +137,15 @@ public class WearConnectivityModule extends WearConnectivitySpec
     Context context = getReactApplicationContext();
     if (!isAppOnForeground(context)) {
       Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
-      Bundle bundle = new Bundle();
-
-      bundle.putString("foo", "bar");
-      service.putExtras(bundle);
+      JSONObject jsonObject = null;
+      try {
+        jsonObject = new JSONObject(messageEvent.getPath());
+        WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
+        Bundle bundle = Arguments.toBundle(messageAsWritableMap);
+        service.putExtras(bundle);
+      } catch (JSONException e) {
+        throw new RuntimeException(e);
+      }
 
       Log.w("TESTING ", "startForegroundService");
       getReactApplicationContext().startForegroundService(service);
@@ -147,7 +153,26 @@ public class WearConnectivityModule extends WearConnectivitySpec
     } else {  // Optionally handle messages differently when the app is in the foreground
       Log.w("TESTING", "App is in foreground; handling message without starting Headless JS service");
       // For example, you might send the event directly to JS:
-      // sendEvent(getReactApplicationContext(), "yourEventName", yourWritableMap);
+      onMessageReceivedOnForeground(messageEvent);
+    }
+  }
+
+
+  public void onMessageReceivedOnForeground(MessageEvent messageEvent) {
+    try {
+      JSONObject jsonObject = new JSONObject(messageEvent.getPath());
+      WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
+      String event = jsonObject.getString("event");
+      FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
+      sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+    } catch (JSONException e) {
+      FLog.w(
+          TAG,
+          TAG
+              + "onMessageReceived with message: "
+              + messageEvent.getPath()
+              + " failed with error: "
+              + e);
     }
   }
 
@@ -162,8 +187,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
     final String packageName = context.getPackageName();
     for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-      Log.w("TESTING ", "packageName: " + packageName);
-      Log.w("TESTING ", "appProcess.processName: " + appProcess.processName);
       if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
               appProcess.processName.equals(packageName)) {
         return true;
@@ -171,37 +194,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
     return false;
   }
-  /*
-  public void onMessageReceived(MessageEvent messageEvent) {
-    try {
-      JSONObject jsonObject = new JSONObject(messageEvent.getPath());
-      WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
-      String event = jsonObject.getString("event");
-      FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
-      // sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
-
-      Data inputData = new Data.Builder()
-        .putString("messagePath", messageEvent.getPath())
-        .build();
-
-      HeadlessJsTaskService.acquireWakeLockNow(reactContext);
-
-      OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MessageWorker.class)
-            .setInputData(inputData)
-            .build();
-
-      WorkManager.getInstance(getReactApplicationContext()).enqueue(workRequest);
-    } catch (JSONException e) {
-      FLog.w(
-          TAG,
-          TAG
-              + "onMessageReceived with message: "
-              + messageEvent.getPath()
-              + " failed with error: "
-              + e);
-    }
-  }
-  */
 
   private void sendEvent(
       ReactContext reactContext, String eventName, @Nullable WritableMap params) {
@@ -224,13 +216,14 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostPause() {
-    // Log.d(TAG, REMOVE_CLIENT);
+    Log.d(TAG, REMOVE_CLIENT);
+    // removed this to allow to send updates when app is in the background
     // client.removeListener(this);
   }
 
   @Override
   public void onHostDestroy() {
-    // Log.d(TAG, REMOVE_CLIENT);
-    // client.removeListener(this);
+    Log.d(TAG, REMOVE_CLIENT);
+    client.removeListener(this);
   }
 }
