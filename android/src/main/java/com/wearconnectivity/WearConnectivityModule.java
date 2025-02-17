@@ -2,6 +2,7 @@ package com.wearconnectivity;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,8 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import androidx.annotation.RequiresApi;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -132,22 +135,23 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.O)
   @Override
   public void onMessageReceived(MessageEvent messageEvent) {
-    Context context = getReactApplicationContext();
+    ReactApplicationContext context = reactContext;
     try {
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
       FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
       if (isAppOnForeground(context)) {
-        sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+        sendEvent(reactContext, event, messageAsWritableMap);
       } else {
-        Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.WearConnectivityTask.class);
+        Intent service = new Intent(reactContext, com.wearconnectivity.WearConnectivityTask.class);
         Bundle bundle = Arguments.toBundle(messageAsWritableMap);
         service.putExtras(bundle);
-        getReactApplicationContext().startForegroundService(service);
-        HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
+        reactContext.startForegroundService(service);
+        HeadlessJsTaskService.acquireWakeLockNow(reactContext);
       }
     } catch (JSONException e) {
       FLog.w(
