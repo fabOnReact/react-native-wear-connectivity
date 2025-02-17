@@ -135,44 +135,28 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @Override
   public void onMessageReceived(MessageEvent messageEvent) {
     Context context = getReactApplicationContext();
-    if (!isAppOnForeground(context)) {
-      Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
-      JSONObject jsonObject = null;
-      try {
-        jsonObject = new JSONObject(messageEvent.getPath());
-        WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
-        Bundle bundle = Arguments.toBundle(messageAsWritableMap);
-        service.putExtras(bundle);
-      } catch (JSONException e) {
-        throw new RuntimeException(e);
-      }
-
-      Log.w("TESTING ", "startForegroundService");
-      getReactApplicationContext().startForegroundService(service);
-      HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
-    } else {  // Optionally handle messages differently when the app is in the foreground
-      Log.w("TESTING", "App is in foreground; handling message without starting Headless JS service");
-      // For example, you might send the event directly to JS:
-      onMessageReceivedOnForeground(messageEvent);
-    }
-  }
-
-
-  public void onMessageReceivedOnForeground(MessageEvent messageEvent) {
     try {
       JSONObject jsonObject = new JSONObject(messageEvent.getPath());
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
       FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
-      sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+      if (isAppOnForeground(context)) {
+        sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
+      } else {
+        Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
+        Bundle bundle = Arguments.toBundle(messageAsWritableMap);
+        service.putExtras(bundle);
+        getReactApplicationContext().startForegroundService(service);
+        HeadlessJsTaskService.acquireWakeLockNow(getReactApplicationContext());
+      }
     } catch (JSONException e) {
       FLog.w(
-          TAG,
-          TAG
-              + "onMessageReceived with message: "
-              + messageEvent.getPath()
-              + " failed with error: "
-              + e);
+              TAG,
+              TAG
+                      + "onMessageReceived with message: "
+                      + messageEvent.getPath()
+                      + " failed with error: "
+                      + e);
     }
   }
 

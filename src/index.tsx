@@ -34,8 +34,6 @@ export type { ReplyCallback, ErrorCallback };
 
 // Define the headless task
 const SomeTaskName = async (taskData) => {
-  console.log('Background task received with data:', taskData);
-
   // Emit an event or process the message as needed
   DeviceEventEmitter.emit('message', taskData);
 };
