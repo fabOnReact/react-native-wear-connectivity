@@ -143,7 +143,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
       if (isAppOnForeground(context)) {
         sendEvent(getReactApplicationContext(), event, messageAsWritableMap);
       } else {
-        Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.MyTaskService.class);
+        Intent service = new Intent(getReactApplicationContext(), com.wearconnectivity.WearConnectivityTask.class);
         Bundle bundle = Arguments.toBundle(messageAsWritableMap);
         service.putExtras(bundle);
         getReactApplicationContext().startForegroundService(service);

@@ -31,6 +31,14 @@ or
 npm install react-native-wear-connectivity
 ```
 
+Add the following entry to your `android/app/src/main/AndroidManifest.xml` (example available [here](example/android/app/src/main/AndroidManifest.xml)):
+
+```xml
+<service android:name="com.wearconnectivity.WearConnectivityTask"
+    android:permission="android.permission.BIND_JOB_SERVICE"
+    android:exported="true" />
+```
+
 ## React Native API Documentation
 
 ### Send Messages

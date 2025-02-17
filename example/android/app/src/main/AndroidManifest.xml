@@ -22,5 +22,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <service android:name="com.wearconnectivity.WearConnectivityTask"
+          android:permission="android.permission.BIND_JOB_SERVICE"
+          android:exported="true" />
     </application>
 </manifest>

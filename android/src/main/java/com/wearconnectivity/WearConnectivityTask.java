@@ -12,7 +12,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.jstasks.HeadlessJsTaskConfig;
 import javax.annotation.Nullable;
 
-public class MyTaskService extends HeadlessJsTaskService {
+public class WearConnectivityTask extends HeadlessJsTaskService {
 
   private static final int NOTIFICATION_ID = 1337;
   private static final String CHANNEL_ID = "wear_connectivity_channel";
@@ -20,7 +20,6 @@ public class MyTaskService extends HeadlessJsTaskService {
   @Override
   public void onCreate() {
     super.onCreate();
-    // For Android O and above, create a notification channel.
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationChannel channel = new NotificationChannel(
               CHANNEL_ID,
@@ -36,16 +35,12 @@ public class MyTaskService extends HeadlessJsTaskService {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    // Build a minimal notification to satisfy foreground service requirements.
     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Wear Connectivity")
             .setContentText("Processing background task")
             .setSmallIcon(android.R.drawable.ic_popup_sync)
             .build();
-
-    // Promote the service to the foreground.
     startForeground(NOTIFICATION_ID, notification);
-
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -53,12 +48,11 @@ public class MyTaskService extends HeadlessJsTaskService {
   protected @Nullable HeadlessJsTaskConfig getTaskConfig(Intent intent) {
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      // Extract necessary data from the extras (i.e., message path or other data)
       return new HeadlessJsTaskConfig(
-              "SomeTaskName",             // Name of the task
-              Arguments.fromBundle(extras), // Data passed to the task
-              5000,                       // Timeout in milliseconds
-              true                       // Task can run in the background
+              "WearConnectivityTask",
+              Arguments.fromBundle(extras),
+              5000,
+              false
       );
     }
     return null;

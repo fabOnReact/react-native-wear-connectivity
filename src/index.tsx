@@ -33,10 +33,13 @@ export { sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
 
 // Define the headless task
-const SomeTaskName = async (taskData) => {
+const WearConnectivityTask = async (taskData) => {
   // Emit an event or process the message as needed
   DeviceEventEmitter.emit('message', taskData);
 };
 
 // Register the headless task with React Native
-AppRegistry.registerHeadlessTask('SomeTaskName', () => SomeTaskName);
+AppRegistry.registerHeadlessTask(
+  'WearConnectivityTask',
+  () => WearConnectivityTask
+);

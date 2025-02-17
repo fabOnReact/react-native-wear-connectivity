@@ -6,7 +6,7 @@
         android:name="androidx.work.impl.background.systemjob.SystemJobService"
         android:permission="android.permission.BIND_JOB_SERVICE"
         android:exported="false"/>
-    <service android:name="com.wearconnectivity.MyTaskService"
+    <service android:name="com.wearconnectivity.WearConnectivityTask"
         android:permission="android.permission.BIND_JOB_SERVICE"
         android:exported="true"  />
     <intent-filter>
