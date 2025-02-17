@@ -139,15 +139,11 @@ public class WearConnectivityModule extends WearConnectivitySpec
       WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
       String event = jsonObject.getString("event");
       FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
-      if (isAppOnForeground(context)) {
-        sendEvent(getReactContext(), event, messageAsWritableMap);
-      } else {
-        Intent service = new Intent(getReactContext(), com.wearconnectivity.WearConnectivityTask.class);
-        Bundle bundle = Arguments.toBundle(messageAsWritableMap);
-        service.putExtras(bundle);
-        getReactContext().startForegroundService(service);
-        HeadlessJsTaskService.acquireWakeLockNow(getReactContext());
-      }
+      Intent service = new Intent(getReactContext(), com.wearconnectivity.WearConnectivityTask.class);
+      Bundle bundle = Arguments.toBundle(messageAsWritableMap);
+      service.putExtras(bundle);
+      getReactContext().startForegroundService(service);
+      HeadlessJsTaskService.acquireWakeLockNow(getReactContext());
     } catch (JSONException e) {
       FLog.w(
               TAG,
@@ -157,32 +153,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
                       + " failed with error: "
                       + e);
     }
-  }
-
-  /**
-   * Checks if the app is in the foreground.
-   */
-  private boolean isAppOnForeground(Context context) {
-    ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-    List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
-    if (appProcesses == null) {
-      return false;
-    }
-    final String packageName = context.getPackageName();
-    for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-      if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
-              appProcess.processName.equals(packageName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private void sendEvent(
-      ReactContext reactContext, String eventName, @Nullable WritableMap params) {
-    reactContext
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-        .emit(eventName, params);
   }
 
   public static ReactApplicationContext getReactContext() {

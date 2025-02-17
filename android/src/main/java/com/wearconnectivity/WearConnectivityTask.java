@@ -52,7 +52,7 @@ public class WearConnectivityTask extends HeadlessJsTaskService {
               "WearConnectivityTask",
               Arguments.fromBundle(extras),
               5000,
-              false
+              true
       );
     }
     return null;
