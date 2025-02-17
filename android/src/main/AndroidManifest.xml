@@ -1,3 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.wearconnectivity">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <service android:name="com.wearconnectivity.WearConnectivityTask"
+        android:permission="android.permission.BIND_JOB_SERVICE"
+        android:exported="true"  />
+    <intent-filter>
+      <action android:name="com.facebook.react.HeadlessJsTaskService" />
+    </intent-filter>
 </manifest>

@@ -1,7 +1,9 @@
+import { AppRegistry } from 'react-native';
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
 import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity';
+import { DeviceEventEmitter } from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -29,3 +31,15 @@ const WearConnectivity = WearConnectivityModule
 
 export { sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
+
+// Define the headless task
+const WearConnectivityTask = async (taskData) => {
+  // Emit an event or process the message as needed
+  DeviceEventEmitter.emit('message', taskData);
+};
+
+// Register the headless task with React Native
+AppRegistry.registerHeadlessTask(
+  'WearConnectivityTask',
+  () => WearConnectivityTask
+);
