@@ -32,8 +32,13 @@ const WearConnectivity = WearConnectivityModule
 export { sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
 
+type WearParameters = {
+  event: string;
+  text: string;
+};
+
 // Define the headless task
-const WearConnectivityTask = async (taskData) => {
+const WearConnectivityTask = async (taskData: WearParameters) => {
   // Emit an event or process the message as needed
   DeviceEventEmitter.emit('message', taskData);
 };
