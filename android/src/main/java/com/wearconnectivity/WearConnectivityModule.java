@@ -17,11 +17,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,28 +77,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     return NAME;
   }
 
-  private List<Node> retrieveNodes(Callback errorCb) {
-    try {
-      int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactApplicationContext());
-      ConnectionResult connectionResult = new ConnectionResult(result);
-      if (!connectionResult.isSuccess()) {
-        errorCb.invoke( MISSING_GOOGLE_PLAY_SERVICES + connectionResult.getErrorMessage());
-        return null;
-      }
-      NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
-      try {
-        Tasks.await(GoogleApiAvailability.getInstance().checkApiAvailability(nodeClient));
-      } catch (Exception e) {
-        errorCb.invoke(INSTALL_GOOGLE_PLAY_WEARABLE + e);
-        return null;
-      }
-      return Tasks.await(nodeClient.getConnectedNodes());
-    } catch (Exception e) {
-      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
-      return null;
-    }
-  }
-
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
@@ -127,6 +113,21 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
+  public void sendFileToWear(File file) {
+    Asset asset = createAssetFromFile(file);
+    PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/file_transfer");
+    dataMapRequest.getDataMap().putAsset("file", asset);
+    dataMapRequest.getDataMap().putLong("timestamp", System.currentTimeMillis());
+
+    PutDataRequest request = dataMapRequest.asPutDataRequest();
+    Task<DataItem> task = Wearable.getDataClient(getReactContext()).putDataItem(request);
+    task.addOnSuccessListener(dataItem -> {
+      FLog.w(TAG, "File sent successfully");
+    }).addOnFailureListener(e -> {
+      FLog.w(TAG, "File sent failed: " + e);
+    });
+  }
+
   @RequiresApi(api = Build.VERSION_CODES.O)
   @Override
   public void onMessageReceived(MessageEvent messageEvent) {
@@ -152,10 +153,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
-  public static ReactApplicationContext getReactContext() {
-    return reactContext;
-  }
-
   @Override
   public void onHostResume() {
     if (client != null && !isListenerAdded) {
@@ -177,5 +174,44 @@ public class WearConnectivityModule extends WearConnectivitySpec
       client.removeListener(this);
       isListenerAdded = false;
     }
+  }
+
+  private List<Node> retrieveNodes(Callback errorCb) {
+    try {
+      int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactContext());
+      ConnectionResult connectionResult = new ConnectionResult(result);
+      if (!connectionResult.isSuccess()) {
+        errorCb.invoke( MISSING_GOOGLE_PLAY_SERVICES + connectionResult.getErrorMessage());
+        return null;
+      }
+      NodeClient nodeClient = Wearable.getNodeClient(getReactContext());
+      try {
+        Tasks.await(GoogleApiAvailability.getInstance().checkApiAvailability(nodeClient));
+      } catch (Exception e) {
+        errorCb.invoke(INSTALL_GOOGLE_PLAY_WEARABLE + e);
+        return null;
+      }
+      return Tasks.await(nodeClient.getConnectedNodes());
+    } catch (Exception e) {
+      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
+      return null;
+    }
+  }
+
+  private Asset createAssetFromFile(File file) {
+    try {
+      FileInputStream fileInputStream = new FileInputStream(file);
+      byte[] byteArray = new byte[(int) file.length()];
+      fileInputStream.read(byteArray);
+      fileInputStream.close();
+      return Asset.createFromBytes(byteArray);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  private static ReactApplicationContext getReactContext() {
+    return reactContext;
   }
 }
