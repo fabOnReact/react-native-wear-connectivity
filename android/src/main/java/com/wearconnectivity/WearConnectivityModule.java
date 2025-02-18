@@ -29,6 +29,7 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.json.JSONException;
@@ -83,7 +84,8 @@ public class WearConnectivityModule extends WearConnectivitySpec
     if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
-          sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
+          // sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
+          sendFileToWear();
         } else {
           FLog.w(
                   TAG,
@@ -113,18 +115,58 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
-  public void sendFileToWear(File file) {
-    Asset asset = createAssetFromFile(file);
+  public void saveTestFile() {
+    File directory = getReactContext().getFilesDir(); // Internal storage path
+    File testFile = new File(directory, "test_file.txt");
+
+    try {
+      FileOutputStream fos = new FileOutputStream(testFile);
+      fos.write("Hello WearOS, this is a test file!".getBytes());
+      fos.close();
+      FLog.w(TAG, "Test file saved successfully at: " + testFile.getAbsolutePath());
+    } catch (IOException e) {
+      FLog.w(TAG, "Failed to save test file: " + e);
+    }
+  }
+
+  public void sendFileToWear() {
+    File directory = getReactContext().getFilesDir(); // Internal storage path
+    File testFile = new File(directory, "test_file.txt");
+
+    // Check if file exists, create it if it does not
+    if (!testFile.exists()) {
+      try {
+        FileOutputStream fos = new FileOutputStream(testFile);
+        fos.write("Hello WearOS, this is a test file!".getBytes());
+        fos.close();
+        FLog.w(TAG, "Test file created successfully at: " + testFile.getAbsolutePath());
+      } catch (IOException e) {
+        FLog.w(TAG, "Failed to create test file: " + e);
+        return; // Stop execution if file creation fails
+      }
+    } else {
+      FLog.w(TAG, "File already exists, sending existing file: " + testFile.getAbsolutePath());
+    }
+
+    // Convert the file into an Asset
+    Asset asset = createAssetFromFile(testFile);
+    if (asset == null) {
+      FLog.w(TAG, "Failed to create asset from file.");
+      return;
+    }
+
+    // Send file via Data Layer
     PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/file_transfer");
     dataMapRequest.getDataMap().putAsset("file", asset);
     dataMapRequest.getDataMap().putLong("timestamp", System.currentTimeMillis());
 
     PutDataRequest request = dataMapRequest.asPutDataRequest();
     Task<DataItem> task = Wearable.getDataClient(getReactContext()).putDataItem(request);
+
     task.addOnSuccessListener(dataItem -> {
-      FLog.w(TAG, "File sent successfully");
+      FLog.w(TAG, "Test file sent successfully");
     }).addOnFailureListener(e -> {
-      FLog.w(TAG, "File sent failed: " + e);
+      FLog.w(TAG, "Test file sending failed: " + e);
     });
   }
 
