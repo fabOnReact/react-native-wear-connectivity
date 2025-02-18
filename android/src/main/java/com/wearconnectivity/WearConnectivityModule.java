@@ -131,19 +131,11 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   public void sendFileToWear() {
     File directory = getReactContext().getFilesDir(); // Internal storage path
-    File testFile = new File(directory, "test_file.txt");
+    File testFile = new File(directory, "profile.jpg");
 
     // Check if file exists, create it if it does not
     if (!testFile.exists()) {
-      try {
-        FileOutputStream fos = new FileOutputStream(testFile);
-        fos.write("Hello WearOS, this is a test file!".getBytes());
-        fos.close();
-        FLog.w(TAG, "Test file created successfully at: " + testFile.getAbsolutePath());
-      } catch (IOException e) {
-        FLog.w(TAG, "Failed to create test file: " + e);
-        return; // Stop execution if file creation fails
-      }
+      FLog.w(TAG, "File does not exist: " + testFile.getAbsolutePath());
     } else {
       FLog.w(TAG, "File already exists, sending existing file: " + testFile.getAbsolutePath());
     }
