@@ -44,6 +44,8 @@ public class WearConnectivityModule extends WearConnectivitySpec
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "react-native-wear-connectivity ";
   private final MessageClient client;
+  private boolean isListenerAdded = false;
+
   private String CLIENT_ADDED =
       TAG + "onMessageReceived listener added when activity is created. Client receives messages.";
   private String NO_NODES_FOUND = TAG + "sendMessage failed. No connected nodes found.";
@@ -161,22 +163,26 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostResume() {
-    if (client != null) {
-      Log.d(TAG, ADD_CLIENT);
+    if (client != null && !isListenerAdded) {
+      Log.d(TAG, "Adding listener on host resume");
       client.addListener(this);
+      isListenerAdded = true;
     }
   }
 
   @Override
   public void onHostPause() {
-    // Log.d(TAG, REMOVE_CLIENT);
-    // removed this to allow to send updates when app is in the background
-    // client.removeListener(this);
+    // Do not remove the listener here so that background events continue to be received.
+    // This prevents duplicate removal/addition issues.
+    Log.d(TAG, "onHostPause: leaving listener active for background events");
   }
 
   @Override
   public void onHostDestroy() {
-    Log.d(TAG, REMOVE_CLIENT);
-    client.removeListener(this);
+    if (client != null && isListenerAdded) {
+      Log.d(TAG, "Removing listener on host destroy");
+      client.removeListener(this);
+      isListenerAdded = false;
+    }
   }
 }
