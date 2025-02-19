@@ -101,54 +101,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
-  /*
-  @ReactMethod
-  public void sendFile(String uri, ReadableMap metadata, Promise promise) {
-    // Retrieve connected nodes; adjust retrieveNodes if needed to remove error callback
-    List<Node> connectedNodes = retrieveNodes(null);
-    if (connectedNodes == null || connectedNodes.isEmpty() || messageClient == null) {
-      promise.reject("E_NO_NODE", "No connected nodes found or messageClient is null");
-      return;
-    }
-
-    // Loop through connected nodes and send the message to the first nearby node.
-    for (Node connectedNode : connectedNodes) {
-      if (connectedNode.isNearby()) {
-        sendMessageToClient(
-                messageData,
-                connectedNode,
-                new Callback() {
-                  @Override
-                  public void invoke(Object... args) {
-                    // Resolve promise with the reply data (if any)
-                    if (args.length > 0) {
-                      promise.resolve(args[0]);
-                    } else {
-                      promise.resolve(null);
-                    }
-                  }
-                },
-                new Callback() {
-                  @Override
-                  public void invoke(Object... args) {
-                    // Reject the promise with an error message
-                    if (args.length > 0 && args[0] instanceof String) {
-                      promise.reject("E_SEND_FAILED", (String) args[0]);
-                    } else {
-                      promise.reject("E_SEND_FAILED", "Failed to send message");
-                    }
-                  }
-                }
-        );
-        return; // Stop after sending to the first nearby node
-      }
-    }
-
-    // If no nearby node was found, reject the promise.
-    promise.reject("E_NO_NEARBY_NODE", "No nearby node found");
-  }*/
-
-
   private void sendMessageToClient(
       ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
     OnSuccessListener<Object> onSuccessListener =
