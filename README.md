@@ -71,6 +71,14 @@ const unsubscribe = watchEvents.on('message', (message) => {
 });
 ```
 
+### Send Files
+
+```js
+import { sendFile } from 'react-native-wear-connectivity';
+
+await sendFile(filePath);
+```
+
 ## Jetpack Compose API Documentation
 
 ### Send Messages
