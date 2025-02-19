@@ -8,6 +8,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.MessageEvent;
@@ -47,7 +49,8 @@ public class WearConnectivityModule extends WearConnectivitySpec
   private static ReactApplicationContext reactContext;
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "react-native-wear-connectivity ";
-  private final MessageClient client;
+  private final MessageClient messageClient;
+  private final WearConnectivityDataClient dataClient;
   private boolean isListenerAdded = false;
 
   private String CLIENT_ADDED =
@@ -67,9 +70,10 @@ public class WearConnectivityModule extends WearConnectivitySpec
     super(context);
     reactContext = context;
     context.addLifecycleEventListener(this);
-    client = Wearable.getMessageClient(context);
+    messageClient = Wearable.getMessageClient(context);
+    dataClient = new WearConnectivityDataClient(context);
     Log.d(TAG, CLIENT_ADDED);
-    client.addListener(this);
+    messageClient.addListener(this);
   }
 
   @Override
@@ -81,11 +85,11 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
-    if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
+    if (connectedNodes != null && connectedNodes.size() > 0 && messageClient != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
           // sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
-          sendFileToWear();
+          dataClient.sendFile("profile.jpg");
         } else {
           FLog.w(
                   TAG,
@@ -98,6 +102,54 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
+  /*
+  @ReactMethod
+  public void sendFile(String uri, ReadableMap metadata, Promise promise) {
+    // Retrieve connected nodes; adjust retrieveNodes if needed to remove error callback
+    List<Node> connectedNodes = retrieveNodes(null);
+    if (connectedNodes == null || connectedNodes.isEmpty() || messageClient == null) {
+      promise.reject("E_NO_NODE", "No connected nodes found or messageClient is null");
+      return;
+    }
+
+    // Loop through connected nodes and send the message to the first nearby node.
+    for (Node connectedNode : connectedNodes) {
+      if (connectedNode.isNearby()) {
+        sendMessageToClient(
+                messageData,
+                connectedNode,
+                new Callback() {
+                  @Override
+                  public void invoke(Object... args) {
+                    // Resolve promise with the reply data (if any)
+                    if (args.length > 0) {
+                      promise.resolve(args[0]);
+                    } else {
+                      promise.resolve(null);
+                    }
+                  }
+                },
+                new Callback() {
+                  @Override
+                  public void invoke(Object... args) {
+                    // Reject the promise with an error message
+                    if (args.length > 0 && args[0] instanceof String) {
+                      promise.reject("E_SEND_FAILED", (String) args[0]);
+                    } else {
+                      promise.reject("E_SEND_FAILED", "Failed to send message");
+                    }
+                  }
+                }
+        );
+        return; // Stop after sending to the first nearby node
+      }
+    }
+
+    // If no nearby node was found, reject the promise.
+    promise.reject("E_NO_NEARBY_NODE", "No nearby node found");
+  }*/
+
+
   private void sendMessageToClient(
       ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
     OnSuccessListener<Object> onSuccessListener =
@@ -107,59 +159,12 @@ public class WearConnectivityModule extends WearConnectivitySpec
     try {
       // the last parameter is for file transfer (for ex. audio)
       JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-      Task<Integer> sendTask = client.sendMessage(node.getId(), messageJSON.toString(), null);
+      Task<Integer> sendTask = messageClient.sendMessage(node.getId(), messageJSON.toString(), null);
       sendTask.addOnSuccessListener(onSuccessListener);
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
       errorCb.invoke("sendMessage failed: " + e);
     }
-  }
-
-  public void saveTestFile() {
-    File directory = getReactContext().getFilesDir(); // Internal storage path
-    File testFile = new File(directory, "test_file.txt");
-
-    try {
-      FileOutputStream fos = new FileOutputStream(testFile);
-      fos.write("Hello WearOS, this is a test file!".getBytes());
-      fos.close();
-      FLog.w(TAG, "Test file saved successfully at: " + testFile.getAbsolutePath());
-    } catch (IOException e) {
-      FLog.w(TAG, "Failed to save test file: " + e);
-    }
-  }
-
-  public void sendFileToWear() {
-    File directory = getReactContext().getFilesDir(); // Internal storage path
-    File testFile = new File(directory, "profile.jpg");
-
-    // Check if file exists, create it if it does not
-    if (!testFile.exists()) {
-      FLog.w(TAG, "File does not exist: " + testFile.getAbsolutePath());
-    } else {
-      FLog.w(TAG, "File already exists, sending existing file: " + testFile.getAbsolutePath());
-    }
-
-    // Convert the file into an Asset
-    Asset asset = createAssetFromFile(testFile);
-    if (asset == null) {
-      FLog.w(TAG, "Failed to create asset from file.");
-      return;
-    }
-
-    // Send file via Data Layer
-    PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/file_transfer");
-    dataMapRequest.getDataMap().putAsset("file", asset);
-    dataMapRequest.getDataMap().putLong("timestamp", System.currentTimeMillis());
-
-    PutDataRequest request = dataMapRequest.asPutDataRequest();
-    Task<DataItem> task = Wearable.getDataClient(getReactContext()).putDataItem(request);
-
-    task.addOnSuccessListener(dataItem -> {
-      FLog.w(TAG, "Test file sent successfully");
-    }).addOnFailureListener(e -> {
-      FLog.w(TAG, "Test file sending failed: " + e);
-    });
   }
 
   @RequiresApi(api = Build.VERSION_CODES.O)
@@ -189,9 +194,9 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostResume() {
-    if (client != null && !isListenerAdded) {
+    if (messageClient != null && !isListenerAdded) {
       Log.d(TAG, "Adding listener on host resume");
-      client.addListener(this);
+      messageClient.addListener(this);
       isListenerAdded = true;
     }
   }
@@ -203,9 +208,9 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   @Override
   public void onHostDestroy() {
-    if (client != null && isListenerAdded) {
+    if (messageClient != null && isListenerAdded) {
       Log.d(TAG, "Removing listener on host destroy");
-      client.removeListener(this);
+      messageClient.removeListener(this);
       isListenerAdded = false;
     }
   }
@@ -228,19 +233,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
       return Tasks.await(nodeClient.getConnectedNodes());
     } catch (Exception e) {
       errorCb.invoke(RETRIEVE_NODES_FAILED + e);
-      return null;
-    }
-  }
-
-  private Asset createAssetFromFile(File file) {
-    try {
-      FileInputStream fileInputStream = new FileInputStream(file);
-      byte[] byteArray = new byte[(int) file.length()];
-      fileInputStream.read(byteArray);
-      fileInputStream.close();
-      return Asset.createFromBytes(byteArray);
-    } catch (IOException e) {
-      e.printStackTrace();
       return null;
     }
   }
