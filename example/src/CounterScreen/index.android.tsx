@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import { View, StyleSheet, Text, Button, Image } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
+import {
+  sendFile,
+  sendMessage,
+  watchEvents,
+} from 'react-native-wear-connectivity';
 import type {
   ReplyCallback,
   ErrorCallback,
@@ -32,6 +37,24 @@ function CounterScreen() {
     sendMessage(json, onSuccess, onError);
   };
 
+  const sendFileToWear = async () => {
+    try {
+      // @ts-ignore
+      const result = await launchImageLibrary();
+      if (!result.assets || result.assets.length === 0) {
+        console.log('No asset selected');
+        return;
+      }
+      const asset = result.assets[0] || { uri: undefined };
+      if (asset.uri) {
+        const filePath = asset.uri.replace('file://', '');
+        await sendFile(filePath);
+      }
+    } catch (error) {
+      console.error('Error in sendFileToWear:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.counter}>{count}</Text>
@@ -40,6 +63,7 @@ function CounterScreen() {
         title="increase counter"
         onPress={sendMessageToWear}
       />
+      <Button title="send file" onPress={sendFileToWear} />
     </View>
   );
 }

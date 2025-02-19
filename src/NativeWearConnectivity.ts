@@ -12,8 +12,11 @@ export type SendMessage = (
   errCb: ErrorCallback
 ) => void;
 
+export type SendFile = (file: string) => Promise<any>;
+
 export interface Spec extends TurboModule {
   sendMessage: SendMessage;
+  sendFile: SendFile;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('WearConnectivity');

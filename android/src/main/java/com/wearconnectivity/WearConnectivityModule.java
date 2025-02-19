@@ -1,22 +1,18 @@
 package com.wearconnectivity;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +23,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
+
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +40,10 @@ public class WearConnectivityModule extends WearConnectivitySpec
   private static ReactApplicationContext reactContext;
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "react-native-wear-connectivity ";
-  private final MessageClient client;
+  private final MessageClient messageClient;
+  private final WearConnectivityDataClient dataClient;
+  private boolean isListenerAdded = false;
+
   private String CLIENT_ADDED =
       TAG + "onMessageReceived listener added when activity is created. Client receives messages.";
   private String NO_NODES_FOUND = TAG + "sendMessage failed. No connected nodes found.";
@@ -61,9 +61,10 @@ public class WearConnectivityModule extends WearConnectivitySpec
     super(context);
     reactContext = context;
     context.addLifecycleEventListener(this);
-    client = Wearable.getMessageClient(context);
+    messageClient = Wearable.getMessageClient(context);
+    dataClient = new WearConnectivityDataClient(context);
     Log.d(TAG, CLIENT_ADDED);
-    client.addListener(this);
+    messageClient.addListener(this);
   }
 
   @Override
@@ -72,32 +73,19 @@ public class WearConnectivityModule extends WearConnectivitySpec
     return NAME;
   }
 
-  private List<Node> retrieveNodes(Callback errorCb) {
-    try {
-      int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactApplicationContext());
-      ConnectionResult connectionResult = new ConnectionResult(result);
-      if (!connectionResult.isSuccess()) {
-        errorCb.invoke( MISSING_GOOGLE_PLAY_SERVICES + connectionResult.getErrorMessage());
-        return null;
-      }
-      NodeClient nodeClient = Wearable.getNodeClient(getReactApplicationContext());
-      try {
-        Tasks.await(GoogleApiAvailability.getInstance().checkApiAvailability(nodeClient));
-      } catch (Exception e) {
-        errorCb.invoke(INSTALL_GOOGLE_PLAY_WEARABLE + e);
-        return null;
-      }
-      return Tasks.await(nodeClient.getConnectedNodes());
-    } catch (Exception e) {
-      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
-      return null;
+  @ReactMethod
+  public void sendFile(String fileName, Promise promise) {
+    if (dataClient != null) {
+      dataClient.sendFile(fileName, promise);
+    } else {
+      promise.reject("E_SEND_FAILED", "Failed to send file");
     }
   }
 
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
-    if (connectedNodes != null && connectedNodes.size() > 0 && client != null) {
+    if (connectedNodes != null && connectedNodes.size() > 0 && messageClient != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
           sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
@@ -122,7 +110,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
     try {
       // the last parameter is for file transfer (for ex. audio)
       JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-      Task<Integer> sendTask = client.sendMessage(node.getId(), messageJSON.toString(), null);
+      Task<Integer> sendTask = messageClient.sendMessage(node.getId(), messageJSON.toString(), null);
       sendTask.addOnSuccessListener(onSuccessListener);
       sendTask.addOnFailureListener(onFailureListener);
     } catch (Exception e) {
@@ -155,28 +143,52 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
-  public static ReactApplicationContext getReactContext() {
-    return reactContext;
-  }
-
   @Override
   public void onHostResume() {
-    if (client != null) {
-      Log.d(TAG, ADD_CLIENT);
-      client.addListener(this);
+    if (messageClient != null && !isListenerAdded) {
+      Log.d(TAG, "Adding listener on host resume");
+      messageClient.addListener(this);
+      isListenerAdded = true;
     }
   }
 
   @Override
   public void onHostPause() {
-    // Log.d(TAG, REMOVE_CLIENT);
-    // removed this to allow to send updates when app is in the background
-    // client.removeListener(this);
+    Log.d(TAG, "onHostPause: leaving listener active for background events");
   }
 
   @Override
   public void onHostDestroy() {
-    Log.d(TAG, REMOVE_CLIENT);
-    client.removeListener(this);
+    if (messageClient != null && isListenerAdded) {
+      Log.d(TAG, "Removing listener on host destroy");
+      messageClient.removeListener(this);
+      isListenerAdded = false;
+    }
+  }
+
+  private List<Node> retrieveNodes(Callback errorCb) {
+    try {
+      int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactContext());
+      ConnectionResult connectionResult = new ConnectionResult(result);
+      if (!connectionResult.isSuccess()) {
+        errorCb.invoke( MISSING_GOOGLE_PLAY_SERVICES + connectionResult.getErrorMessage());
+        return null;
+      }
+      NodeClient nodeClient = Wearable.getNodeClient(getReactContext());
+      try {
+        Tasks.await(GoogleApiAvailability.getInstance().checkApiAvailability(nodeClient));
+      } catch (Exception e) {
+        errorCb.invoke(INSTALL_GOOGLE_PLAY_WEARABLE + e);
+        return null;
+      }
+      return Tasks.await(nodeClient.getConnectedNodes());
+    } catch (Exception e) {
+      errorCb.invoke(RETRIEVE_NODES_FAILED + e);
+      return null;
+    }
+  }
+
+  private static ReactApplicationContext getReactContext() {
+    return reactContext;
   }
 }
