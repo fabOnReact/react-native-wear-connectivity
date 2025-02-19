@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import { View, StyleSheet, Text, Button, Image } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import {
   sendFile,
   sendMessage,
@@ -36,8 +37,22 @@ function CounterScreen() {
     sendMessage(json, onSuccess, onError);
   };
 
-  const sendFileToWear = () => {
-    sendFile('profile.jpg');
+  const sendFileToWear = async () => {
+    try {
+      // @ts-ignore
+      const result = await launchImageLibrary();
+      if (!result.assets || result.assets.length === 0) {
+        console.log('No asset selected');
+        return;
+      }
+      const asset = result.assets[0] || { uri: undefined };
+      if (asset.uri) {
+        const filePath = asset.uri.replace('file://', '');
+        await sendFile(filePath);
+      }
+    } catch (error) {
+      console.error('Error in sendFileToWear:', error);
+    }
   };
 
   return (

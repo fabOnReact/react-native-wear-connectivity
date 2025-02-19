@@ -28,11 +28,10 @@ public class WearConnectivityDataClient {
 
     /**
      * Sends a file (as an Asset) using the DataClient API.
-     * @param file the file to be sent.
+     * @param path to the file to be sent.
      */
-    public void sendFile(String fileName, Promise promise) {
-        File directory = getReactContext().getFilesDir(); // Internal storage path
-        File file = new File(directory, fileName);
+    public void sendFile(String uri, Promise promise) {
+        File file = new File(uri);
         Asset asset = createAssetFromFile(file);
         if (asset == null) {
             FLog.w(TAG, "Failed to create asset from file.");
