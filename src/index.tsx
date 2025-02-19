@@ -2,7 +2,11 @@ import { AppRegistry } from 'react-native';
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
-import type { ReplyCallback, ErrorCallback } from './NativeWearConnectivity';
+import type {
+  ReplyCallback,
+  ErrorCallback,
+  SendFile,
+} from './NativeWearConnectivity';
 import { DeviceEventEmitter } from 'react-native';
 
 const LINKING_ERROR =
@@ -29,7 +33,11 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-export { sendMessage, watchEvents, WearConnectivity };
+const sendFile: SendFile = (file) => {
+  return WearConnectivity.sendFile(file);
+};
+
+export { sendFile, sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
 
 type WearParameters = {

@@ -18,21 +18,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.gms.wearable.Asset;
-import com.google.android.gms.wearable.DataClient;
-import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,13 +74,21 @@ public class WearConnectivityModule extends WearConnectivitySpec
   }
 
   @ReactMethod
+  public void sendFile(String fileName, Promise promise) {
+    if (dataClient != null) {
+      dataClient.sendFile(fileName, promise);
+    } else {
+      promise.reject("E_SEND_FAILED", "Failed to send file");
+    }
+  }
+
+  @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
     if (connectedNodes != null && connectedNodes.size() > 0 && messageClient != null) {
       for (Node connectedNode : connectedNodes) {
         if (connectedNode.isNearby()) {
-          // sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
-          dataClient.sendFile("profile.jpg");
+          sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
         } else {
           FLog.w(
                   TAG,

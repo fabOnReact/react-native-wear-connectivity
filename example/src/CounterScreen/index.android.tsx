@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import {
+  sendFile,
+  sendMessage,
+  watchEvents,
+} from 'react-native-wear-connectivity';
 import type {
   ReplyCallback,
   ErrorCallback,
@@ -32,6 +36,10 @@ function CounterScreen() {
     sendMessage(json, onSuccess, onError);
   };
 
+  const sendFileToWear = () => {
+    sendFile('profile.jpg');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.counter}>{count}</Text>
@@ -40,6 +48,7 @@ function CounterScreen() {
         title="increase counter"
         onPress={sendMessageToWear}
       />
+      <Button title="send file" onPress={sendFileToWear} />
     </View>
   );
 }

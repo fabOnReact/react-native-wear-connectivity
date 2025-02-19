@@ -2,6 +2,7 @@ package com.wearconnectivity;
 
 import android.util.Log;
 import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.Promise;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataClient;
@@ -29,7 +30,7 @@ public class WearConnectivityDataClient {
      * Sends a file (as an Asset) using the DataClient API.
      * @param file the file to be sent.
      */
-    public void sendFile(String fileName) {
+    public void sendFile(String fileName, Promise promise) {
         File directory = getReactContext().getFilesDir(); // Internal storage path
         File file = new File(directory, fileName);
         Asset asset = createAssetFromFile(file);
@@ -44,9 +45,9 @@ public class WearConnectivityDataClient {
         PutDataRequest request = dataMapRequest.asPutDataRequest();
         Task<DataItem> task = dataClient.putDataItem(request);
         task.addOnSuccessListener(dataItem -> {
-            FLog.w(TAG, "File sent successfully via DataClient.");
+            promise.resolve("File sent successfully via DataClient.");
         }).addOnFailureListener(e -> {
-            FLog.w(TAG, "File sending failed: " + e);
+            promise.reject("File sending failed: " + e);
         });
     }
 
