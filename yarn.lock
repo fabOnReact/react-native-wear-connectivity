@@ -13666,9 +13666,20 @@ __metadata:
     react: 18.3.1
     react-native: ^0.77.1
     react-native-image-picker: ^8.1.0
+    react-native-video: ^6.10.1
     react-test-renderer: 18.3.1
   languageName: unknown
   linkType: soft
+
+"react-native-video@npm:^6.10.1":
+  version: 6.10.1
+  resolution: "react-native-video@npm:6.10.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 9ffe4b10b623b7954ed0d3e26da44c574a8def78290819ea84e3d36a9be034e69e82ceb5c40c186a86a575fb601759ddfddecd57798bd19b7d36ada3e7e4e133
+  languageName: node
+  linkType: hard
 
 "react-native-wear-connectivity-example@workspace:watch-example":
   version: 0.0.0-use.local

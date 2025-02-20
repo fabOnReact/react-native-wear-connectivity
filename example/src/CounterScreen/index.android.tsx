@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,6 +17,7 @@ import type {
   ReplyCallback,
   ErrorCallback,
 } from 'react-native-wear-connectivity';
+import AudioPlayer from '../AudioPlayer';
 
 function CounterScreen() {
   const [disabled, setDisabled] = React.useState(false);
@@ -30,14 +31,6 @@ function CounterScreen() {
     return () => {
       unsubscribe();
     };
-  }, []);
-
-  useEffect(() => {
-    const cancel = monitorFileTransfers((transferInfo) => {
-      console.log('File transfer event:', transferInfo);
-    });
-
-    return () => cancel(); // Cleanup when component unmounts
   }, []);
 
   const onSuccess: ReplyCallback = (result) => {
@@ -72,6 +65,7 @@ function CounterScreen() {
 
   return (
     <View style={styles.container}>
+      <AudioPlayer />
       <Text style={styles.counter}>{count}</Text>
       <Button
         disabled={disabled}
