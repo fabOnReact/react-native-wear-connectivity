@@ -66,7 +66,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
-                if (item.getUri().getPath().equals("/file_transfer")) {
+                if (item.getUri().getPath().equals("/voice_transfer")) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     Asset asset = dataMap.getAsset("file");
                     if (asset != null) {
@@ -122,6 +122,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
                     fos.close();
                     is.close();
                     // Dispatch an event with the file path
+                    FLog.w(TAG,"WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
                     dispatchEvent("WatchFileReceived", file.getAbsolutePath());
                 } catch (IOException e) {
                     FLog.w(TAG,"WatchFileReceiveError: " + e.getMessage());
