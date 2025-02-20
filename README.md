@@ -53,30 +53,75 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
 
 ## React Native API Documentation
 
+The example of implementation available in the [CounterScreen](example/src/CounterScreen/index.android.tsx).
+
 ### Send Messages
+
+https://mtford.co.uk/projects/react-native-watch-connectivity/docs/communication/
 
 ```js
 import { sendMessage } from 'react-native-wear-connectivity';
 
-sendMessage({ text: 'Hello watch!' });
+sendMessage({ text: 'Hello watch!' }, (reply) => {
+  console.log(reply); // {"text": "Hello React Native app!"}
+});
 ```
 
 ### Receive Messages
 
+https://mtford.co.uk/projects/react-native-watch-connectivity/docs/communication/
+
 ```js
 import { watchEvents } from 'react-native-wear-connectivity';
 
-const unsubscribe = watchEvents.on('message', (message) => {
+const unsubscribe = watchEvents.on('message', (message, reply) => {
   console.log('received message from watch', message);
+  /*
+   * reply is not supported on Android
+   * reply({ text: 'Thanks watch!' });
+   */
 });
 ```
 
 ### Send Files
 
-```js
-import { sendFile } from 'react-native-wear-connectivity';
+https://mtford.co.uk/projects/react-native-watch-connectivity/docs/files/
 
-await sendFile(filePath);
+```js
+import { startFileTransfer } from 'react-native-wear-connectivity';
+
+const metadata = {};
+
+const { id } = await startFileTransfer('file:///path/to/file', metadata);
+
+console.log(`Started a new file transfer with id ${id}`);
+```
+
+### Monitor File Transfers
+
+https://mtford.co.uk/projects/react-native-watch-connectivity/docs/files/
+
+```js
+import { monitorFileTransfers } from 'react-native-wear-connectivity';
+
+const cancel = monitorFileTransfers((event) => {
+  const {
+    type, // started | progress | finished | error
+    completedUnitCount, // num bytes completed
+    estimatedTimeRemaining,
+    fractionCompleted,
+    throughput, // Bit rate
+    totalUnitCount, // total num. bytes
+    url, // url of file being transferred
+    metadata, // file metadata
+    id, // id === transferId
+    startTime, // time that the file transfer started
+    endTime, // time that the file transfer ended
+    error, // null or [Error] if the file transfer failed
+  } = transferInfo;
+});
+
+cancel();
 ```
 
 ## Jetpack Compose API Documentation

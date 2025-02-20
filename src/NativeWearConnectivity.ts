@@ -12,7 +12,7 @@ export type SendMessage = (
   errCb: ErrorCallback
 ) => void;
 
-export type SendFile = (file: string) => Promise<any>;
+export type SendFile = (file: string, metadata: unknown) => Promise<any>;
 
 export interface Spec extends TurboModule {
   sendMessage: SendMessage;

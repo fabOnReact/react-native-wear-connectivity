@@ -33,11 +33,11 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-const sendFile: SendFile = (file) => {
+const startFileTransfer: SendFile = (file, metadata) => {
   return WearConnectivity.sendFile(file);
 };
 
-export { sendFile, sendMessage, watchEvents, WearConnectivity };
+export { startFileTransfer, sendMessage, watchEvents, WearConnectivity };
 export type { ReplyCallback, ErrorCallback };
 
 type WearParameters = {
@@ -50,6 +50,22 @@ const WearConnectivityTask = async (taskData: WearParameters) => {
   // Emit an event or process the message as needed
   DeviceEventEmitter.emit('message', taskData);
 };
+
+/**
+ * Monitors file transfer events.
+ * @param callback Function to receive transfer events.
+ * @returns Unsubscribe function.
+ */
+export function monitorFileTransfers(callback: (event: any) => void) {
+  const subscription = DeviceEventEmitter.addListener(
+    'FileTransferEvent',
+    callback
+  );
+
+  return () => {
+    subscription.remove();
+  };
+}
 
 // Register the headless task with React Native
 AppRegistry.registerHeadlessTask(

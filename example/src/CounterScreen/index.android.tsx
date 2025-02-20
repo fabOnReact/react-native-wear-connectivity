@@ -1,8 +1,15 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Button, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  DeviceEventEmitter,
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
-  sendFile,
+  monitorFileTransfers,
+  startFileTransfer,
   sendMessage,
   watchEvents,
 } from 'react-native-wear-connectivity';
@@ -10,6 +17,7 @@ import type {
   ReplyCallback,
   ErrorCallback,
 } from 'react-native-wear-connectivity';
+import AudioPlayer from '../AudioPlayer';
 
 function CounterScreen() {
   const [disabled, setDisabled] = React.useState(false);
@@ -48,7 +56,7 @@ function CounterScreen() {
       const asset = result.assets[0] || { uri: undefined };
       if (asset.uri) {
         const filePath = asset.uri.replace('file://', '');
-        await sendFile(filePath);
+        await startFileTransfer(filePath, {});
       }
     } catch (error) {
       console.error('Error in sendFileToWear:', error);
@@ -57,6 +65,7 @@ function CounterScreen() {
 
   return (
     <View style={styles.container}>
+      <AudioPlayer />
       <Text style={styles.counter}>{count}</Text>
       <Button
         disabled={disabled}
