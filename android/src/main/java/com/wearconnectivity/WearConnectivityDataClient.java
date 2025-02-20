@@ -1,6 +1,5 @@
 package com.wearconnectivity;
 
-import android.util.Log;
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Promise;
 import com.google.android.gms.tasks.Task;
@@ -13,7 +12,6 @@ import com.google.android.gms.wearable.Wearable;
 import com.facebook.react.bridge.ReactApplicationContext;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class WearConnectivityDataClient {

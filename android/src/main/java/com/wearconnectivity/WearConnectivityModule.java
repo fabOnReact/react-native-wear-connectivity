@@ -4,19 +4,13 @@ import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.facebook.common.logging.FLog;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.MessageEvent;
@@ -25,14 +19,9 @@ import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.List;
-import org.json.JSONException;
-import org.json.JSONObject;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import androidx.annotation.RequiresApi;
-import com.facebook.react.HeadlessJsTaskService;
-import android.content.Intent;
-import android.os.Bundle;
 
 public class WearConnectivityModule extends WearConnectivitySpec
     implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
