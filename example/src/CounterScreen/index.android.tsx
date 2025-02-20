@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Button, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  DeviceEventEmitter,
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
   sendFile,
@@ -22,6 +28,21 @@ function CounterScreen() {
 
     return () => {
       unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Subscribe to the native event
+    const subscription = DeviceEventEmitter.addListener(
+      'WatchFileReceived', // Must match the event name sent from native
+      (filePath) => {
+        console.log('File received at:', filePath);
+      }
+    );
+
+    // Cleanup when component unmounts
+    return () => {
+      subscription.remove();
     };
   }, []);
 
