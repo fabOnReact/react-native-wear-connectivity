@@ -23,8 +23,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import androidx.annotation.RequiresApi;
 
-public class WearConnectivityModule extends WearConnectivitySpec
-    implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
+public class WearConnectivityModule extends WearConnectivitySpec {
 
   private static ReactApplicationContext reactContext;
   public static final String NAME = "WearConnectivity";
@@ -49,12 +48,8 @@ public class WearConnectivityModule extends WearConnectivitySpec
   WearConnectivityModule(ReactApplicationContext context) {
     super(context);
     reactContext = context;
-    context.addLifecycleEventListener(this);
     messageClient = new WearConnectivityMessageClient(context);
     dataClient = new WearConnectivityDataClient(context);
-    Log.d(TAG, CLIENT_ADDED);
-    messageClient.addListener();
-    dataClient.addListener();
   }
 
   @Override
@@ -72,6 +67,10 @@ public class WearConnectivityModule extends WearConnectivitySpec
     }
   }
 
+  /**
+   * Sends a message to the first nearby node among the provided connectedNodes.
+   * If no nearby node is found, it invokes the error callback.
+   */
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
@@ -80,40 +79,6 @@ public class WearConnectivityModule extends WearConnectivitySpec
     } else {
       errorCb.invoke(NO_NODES_FOUND);
     }
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  @Override
-  public void onMessageReceived(@NonNull MessageEvent messageEvent) {
-    if (messageClient != null) {
-      messageClient.onMessageReceived(messageEvent);
-    } else {
-      FLog.w(TAG, "onMessageReceived: messageClient is null");
-    }
-  }
-
-  @Override
-  public void onHostResume() {
-    if (messageClient != null && !isListenerAdded) {
-      Log.d(TAG, "Adding listener on host resume");
-      messageClient.addListener();
-      isListenerAdded = true;
-    }
-  }
-
-  @Override
-  public void onHostPause() {
-    Log.d(TAG, "onHostPause: leaving listener active for background events");
-  }
-
-  @Override
-  public void onHostDestroy() {
-    if (messageClient != null && isListenerAdded) {
-      Log.d(TAG, "Removing listener on host destroy");
-      messageClient.removeListener();
-      isListenerAdded = false;
-    }
-    messageClient.removeListener();
   }
 
   private List<Node> retrieveNodes(Callback errorCb) {

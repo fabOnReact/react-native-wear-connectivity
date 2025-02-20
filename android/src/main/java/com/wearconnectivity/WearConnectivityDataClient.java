@@ -1,12 +1,14 @@
 package com.wearconnectivity;
 
 import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageClient;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -26,7 +28,7 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 
-public class WearConnectivityDataClient implements DataClient.OnDataChangedListener {
+public class WearConnectivityDataClient implements DataClient.OnDataChangedListener, LifecycleEventListener {
     private static final String TAG = "WearConnectivityDataClient";
     private DataClient dataClient;
     private static ReactApplicationContext reactContext;
@@ -34,18 +36,8 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     public WearConnectivityDataClient(ReactApplicationContext context) {
         dataClient = Wearable.getDataClient(context);
         reactContext = context;
-    }
-
-    public DataClient getDataClient() {
-        return dataClient;
-    }
-
-    public void addListener() {
         dataClient.addListener(this);
-    }
-
-    public void removeListener() {
-        dataClient.removeListener(this);
+        context.addLifecycleEventListener(this);
     }
 
     /**
@@ -152,5 +144,20 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     private void dispatchEvent(String eventName, String body) {
         getReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, body);
+    }
+
+    @Override
+    public void onHostResume() {
+        // do nothing
+    }
+
+    @Override
+    public void onHostPause() {
+        // do nothing
+    }
+
+    @Override
+    public void onHostDestroy() {
+        dataClient.removeListener(this);
     }
 }

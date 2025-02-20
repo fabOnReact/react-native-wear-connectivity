@@ -1,14 +1,19 @@
 package com.wearconnectivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JSONArguments;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
@@ -26,27 +31,18 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class WearConnectivityMessageClient implements MessageClient.OnMessageReceivedListener {
+public class WearConnectivityMessageClient implements MessageClient.OnMessageReceivedListener, LifecycleEventListener {
 
     private static final String TAG = "WearConnectivityMessageClient";
     private final MessageClient messageClient;
     private final ReactApplicationContext reactContext;
+    private boolean isListenerAdded;
 
     public WearConnectivityMessageClient(ReactApplicationContext context) {
         this.reactContext = context;
         this.messageClient = Wearable.getMessageClient(context);
-    }
-
-    public MessageClient getMessageClient() {
-        return messageClient;
-    }
-
-    public void addListener() {
         messageClient.addListener(this);
-    }
-
-    public void removeListener() {
-        messageClient.removeListener(this);
+        context.addLifecycleEventListener(this);
     }
 
     /**
@@ -64,25 +60,10 @@ public class WearConnectivityMessageClient implements MessageClient.OnMessageRec
     }
 
     /**
-     * Helper method that sends a message to a specific node.
-     */
-    private void sendMessageToClient(ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
-        OnSuccessListener<Object> onSuccessListener = object -> replyCb.invoke("message sent to client with nodeID: " + object.toString());
-        OnFailureListener onFailureListener = error -> errorCb.invoke("message sending failed: " + error.toString());
-        try {
-            JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-            Task<Integer> sendTask = messageClient.sendMessage(node.getId(), messageJSON.toString(), null);
-            sendTask.addOnSuccessListener(onSuccessListener);
-            sendTask.addOnFailureListener(onFailureListener);
-        } catch (Exception e) {
-            errorCb.invoke("sendMessage failed: " + e);
-        }
-    }
-
-    /**
      * Called when a message is received.
      * Forwards the message to a HeadlessJs service.
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
         try {
@@ -97,6 +78,45 @@ public class WearConnectivityMessageClient implements MessageClient.OnMessageRec
             HeadlessJsTaskService.acquireWakeLockNow(reactContext);
         } catch (JSONException e) {
             FLog.w(TAG, TAG + " onMessageReceived with message: " + messageEvent.getPath() + " failed with error: " + e);
+        }
+    }
+
+    @Override
+    public void onHostResume() {
+        if (messageClient != null && !isListenerAdded) {
+            Log.d(TAG, "Adding listener on host resume");
+            messageClient.addListener(this);
+            isListenerAdded = true;
+        }
+    }
+
+    @Override
+    public void onHostPause() {
+        Log.d(TAG, "onHostPause: leaving listener active for background events");
+    }
+
+    @Override
+    public void onHostDestroy() {
+        if (messageClient != null && isListenerAdded) {
+            Log.d(TAG, "Removing listener on host destroy");
+            messageClient.removeListener(this);
+            isListenerAdded = false;
+        }
+    }
+
+    /**
+     * Helper method that sends a message to a specific node.
+     */
+    private void sendMessageToClient(ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
+        OnSuccessListener<Object> onSuccessListener = object -> replyCb.invoke("message sent to client with nodeID: " + object.toString());
+        OnFailureListener onFailureListener = error -> errorCb.invoke("message sending failed: " + error.toString());
+        try {
+            JSONObject messageJSON = new JSONObject(messageData.toHashMap());
+            Task<Integer> sendTask = messageClient.sendMessage(node.getId(), messageJSON.toString(), null);
+            sendTask.addOnSuccessListener(onSuccessListener);
+            sendTask.addOnFailureListener(onFailureListener);
+        } catch (Exception e) {
+            errorCb.invoke("sendMessage failed: " + e);
         }
     }
 }
