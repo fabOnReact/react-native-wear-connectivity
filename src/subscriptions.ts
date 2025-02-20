@@ -10,10 +10,6 @@ const _addListener: AddListener = (event, cb, reply) => {
     throw new Error('Must pass event');
   }
 
-  if (reply != null) {
-    console.log('watchEvents.on does not support reply on Android');
-  }
-
   switch (event) {
     case 'message':
       break;

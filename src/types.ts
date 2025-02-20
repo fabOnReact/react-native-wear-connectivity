@@ -4,7 +4,8 @@ type UnsubscribeFn = Function;
 type CallbackFunction = (event: any) => void;
 export type AddListener = (
   event: EventType,
-  cb: CallbackFunction
+  cb: CallbackFunction,
+  reply: unknown
 ) => UnsubscribeFn;
 
 export type WatchEvents = {
