@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
+  monitorFileTransfers,
   sendFile,
   sendMessage,
   watchEvents,
@@ -32,18 +33,11 @@ function CounterScreen() {
   }, []);
 
   useEffect(() => {
-    // Subscribe to the native event
-    const subscription = DeviceEventEmitter.addListener(
-      'WatchFileReceived', // Must match the event name sent from native
-      (filePath) => {
-        console.log('File received at:', filePath);
-      }
-    );
+    const cancel = monitorFileTransfers((transferInfo) => {
+      console.log('File transfer event:', transferInfo);
+    });
 
-    // Cleanup when component unmounts
-    return () => {
-      subscription.remove();
-    };
+    return () => cancel(); // Cleanup when component unmounts
   }, []);
 
   const onSuccess: ReplyCallback = (result) => {

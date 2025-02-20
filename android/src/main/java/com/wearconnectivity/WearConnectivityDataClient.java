@@ -3,8 +3,10 @@ package com.wearconnectivity;
 import android.webkit.MimeTypeMap;
 
 import com.facebook.common.logging.FLog;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataClient;
@@ -36,6 +38,8 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     private DataClient dataClient;
     private static ReactApplicationContext reactContext;
     private String fileName = "unknown_file";
+    private long startTime;
+    private int totalBytes;
 
     public WearConnectivityDataClient(ReactApplicationContext context) {
         dataClient = Wearable.getDataClient(context);
@@ -113,8 +117,50 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
 
     private void receiveFile(Asset asset) {
         Task<DataClient.GetFdForAssetResponse> task = dataClient.getFdForAsset(asset);
+        startTime = System.currentTimeMillis();
+
+        // Dispatch 'started' event
+        dispatchFileTransferEvent("started", startTime, 0, 0, 0, 0, fileName, null);
         task.addOnSuccessListener(this::handleFileReceived)
                 .addOnFailureListener(this::handleFileReceiveError);
+    }
+
+
+    /**
+     * Dispatches a file transfer event to React Native.
+     */
+    private void dispatchFileTransferEvent(
+            String type, long startTime, long completedUnitCount, long estimatedTimeRemaining,
+            float fractionCompleted, long throughput, String fileName, String errorMessage) {
+        WritableMap event = Arguments.createMap();
+        event.putString("type", type);
+        event.putString("url", getReactContext().getFilesDir() + "/" + fileName);
+        event.putString("id", fileName);
+        event.putDouble("startTime", startTime);
+        event.putDouble("endTime", type.equals("finished") ? System.currentTimeMillis() : 0);
+        event.putDouble("completedUnitCount", completedUnitCount);
+        event.putDouble("estimatedTimeRemaining", estimatedTimeRemaining);
+        event.putDouble("fractionCompleted", fractionCompleted);
+        event.putDouble("throughput", throughput);
+        event.putMap("metadata", getFileMetadata(fileName)); // Get metadata if available
+        if (errorMessage != null) {
+            event.putString("error", errorMessage);
+        } else {
+            event.putNull("error");
+        }
+
+        getReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("FileTransferEvent", event);
+    }
+
+    /**
+     * Retrieves metadata associated with a file.
+     */
+    private WritableMap getFileMetadata(String fileName) {
+        WritableMap metadata = Arguments.createMap();
+        metadata.putString("fileName", fileName);
+        metadata.putString("fileType", MimeTypeMap.getFileExtensionFromUrl(fileName));
+        return metadata;
     }
 
     private void handleFileReceived(DataClient.GetFdForAssetResponse response) {
@@ -126,16 +172,18 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
 
         try {
             File file = new File(getReactContext().getFilesDir(), fileName);
+            totalBytes = response.getInputStream().available();
+
             saveFile(is, file);
             FLog.w(TAG, "WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
-            dispatchEvent("WatchFileReceived", file.getAbsolutePath());
+            dispatchFileTransferEvent("finished", startTime, totalBytes, 0, 1.0f, 0, fileName, null);
         } catch (IOException e) {
-            FLog.w(TAG, "WatchFileReceiveError: " + e.getMessage());
+            dispatchFileTransferEvent("error", startTime, 0, 0, 0, 0, fileName, e.getMessage());
         }
     }
 
     private void handleFileReceiveError(@NonNull Exception e) {
-        FLog.w(TAG, "WatchFileReceiveError: " + e.toString());
+        dispatchFileTransferEvent("error", startTime, 0, 0, 0, 0, fileName, e.toString());
     }
 
     private void dispatchEvent(String eventName, String body) {
@@ -146,9 +194,21 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     private void saveFile(InputStream is, File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         byte[] buffer = new byte[1024];
-        int read;
-        while ((read = is.read(buffer)) != -1) {
-            fos.write(buffer, 0, read);
+        int bytesRead;
+        long completedBytes = 0;
+
+        while ((bytesRead = is.read(buffer)) != -1) {
+            fos.write(buffer, 0, bytesRead);
+            completedBytes += bytesRead;
+
+            // Calculate progress metrics
+            float fractionCompleted = (float) completedBytes / totalBytes;
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            long estimatedTimeRemaining = (long) ((1 - fractionCompleted) * elapsedTime / fractionCompleted);
+            long throughput = completedBytes * 8 / (elapsedTime + 1); // Avoid division by zero
+
+            // Dispatch 'progress' event
+            dispatchFileTransferEvent("progress", startTime, completedBytes, estimatedTimeRemaining, fractionCompleted, throughput, fileName, null);
         }
         fos.flush();
         fos.close();

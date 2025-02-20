@@ -51,6 +51,22 @@ const WearConnectivityTask = async (taskData: WearParameters) => {
   DeviceEventEmitter.emit('message', taskData);
 };
 
+/**
+ * Monitors file transfer events.
+ * @param callback Function to receive transfer events.
+ * @returns Unsubscribe function.
+ */
+export function monitorFileTransfers(callback: (event: any) => void) {
+  const subscription = DeviceEventEmitter.addListener(
+    'FileTransferEvent',
+    callback
+  );
+
+  return () => {
+    subscription.remove();
+  };
+}
+
 // Register the headless task with React Native
 AppRegistry.registerHeadlessTask(
   'WearConnectivityTask',
