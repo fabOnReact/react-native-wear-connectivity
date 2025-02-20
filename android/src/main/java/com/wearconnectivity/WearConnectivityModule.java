@@ -40,7 +40,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
   private static ReactApplicationContext reactContext;
   public static final String NAME = "WearConnectivity";
   private static final String TAG = "react-native-wear-connectivity ";
-  private final MessageClient messageClient;
+  private final WearConnectivityMessageClient messageClient;
   private final WearConnectivityDataClient dataClient;
   private boolean isListenerAdded = false;
 
@@ -61,10 +61,10 @@ public class WearConnectivityModule extends WearConnectivitySpec
     super(context);
     reactContext = context;
     context.addLifecycleEventListener(this);
-    messageClient = Wearable.getMessageClient(context);
+    messageClient = new WearConnectivityMessageClient(context);
     dataClient = new WearConnectivityDataClient(context);
     Log.d(TAG, CLIENT_ADDED);
-    messageClient.addListener(this);
+    messageClient.addListener();
   }
 
   @Override
@@ -85,61 +85,20 @@ public class WearConnectivityModule extends WearConnectivitySpec
   @ReactMethod
   public void sendMessage(ReadableMap messageData, Callback replyCb, Callback errorCb) {
     List<Node> connectedNodes = retrieveNodes(errorCb);
-    if (connectedNodes != null && connectedNodes.size() > 0 && messageClient != null) {
-      for (Node connectedNode : connectedNodes) {
-        if (connectedNode.isNearby()) {
-          sendMessageToClient(messageData, connectedNode, replyCb, errorCb);
-        } else {
-          FLog.w(
-                  TAG,
-                  TAG
-                          + "connectedNode: "
-                          + connectedNode.getDisplayName()
-                          + CONNECTED_DEVICE_IS_FAR);
-        }
-      }
-    }
-  }
-
-  private void sendMessageToClient(
-      ReadableMap messageData, Node node, Callback replyCb, Callback errorCb) {
-    OnSuccessListener<Object> onSuccessListener =
-        object -> replyCb.invoke("message sent to client with nodeID: " + object.toString());
-    OnFailureListener onFailureListener =
-        object -> errorCb.invoke("message sent to client with nodeID: " + object.toString());
-    try {
-      // the last parameter is for file transfer (for ex. audio)
-      JSONObject messageJSON = new JSONObject(messageData.toHashMap());
-      Task<Integer> sendTask = messageClient.sendMessage(node.getId(), messageJSON.toString(), null);
-      sendTask.addOnSuccessListener(onSuccessListener);
-      sendTask.addOnFailureListener(onFailureListener);
-    } catch (Exception e) {
-      errorCb.invoke("sendMessage failed: " + e);
+    if (connectedNodes != null && !connectedNodes.isEmpty()) {
+      messageClient.sendMessage(messageData, connectedNodes, replyCb, errorCb);
+    } else {
+      errorCb.invoke(NO_NODES_FOUND);
     }
   }
 
   @RequiresApi(api = Build.VERSION_CODES.O)
   @Override
-  public void onMessageReceived(MessageEvent messageEvent) {
-    ReactApplicationContext context = getReactContext();
-    try {
-      JSONObject jsonObject = new JSONObject(messageEvent.getPath());
-      WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
-      String event = jsonObject.getString("event");
-      FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
-      Intent service = new Intent(getReactContext(), com.wearconnectivity.WearConnectivityTask.class);
-      Bundle bundle = Arguments.toBundle(messageAsWritableMap);
-      service.putExtras(bundle);
-      getReactContext().startForegroundService(service);
-      HeadlessJsTaskService.acquireWakeLockNow(getReactContext());
-    } catch (JSONException e) {
-      FLog.w(
-              TAG,
-              TAG
-                      + "onMessageReceived with message: "
-                      + messageEvent.getPath()
-                      + " failed with error: "
-                      + e);
+  public void onMessageReceived(@NonNull MessageEvent messageEvent) {
+    if (messageClient != null) {
+      messageClient.onMessageReceived(messageEvent);
+    } else {
+      FLog.w(TAG, "onMessageReceived: messageClient is null");
     }
   }
 
@@ -147,7 +106,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
   public void onHostResume() {
     if (messageClient != null && !isListenerAdded) {
       Log.d(TAG, "Adding listener on host resume");
-      messageClient.addListener(this);
+      messageClient.addListener();
       isListenerAdded = true;
     }
   }
@@ -161,7 +120,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
   public void onHostDestroy() {
     if (messageClient != null && isListenerAdded) {
       Log.d(TAG, "Removing listener on host destroy");
-      messageClient.removeListener(this);
+      messageClient.removeListener();
       isListenerAdded = false;
     }
   }
