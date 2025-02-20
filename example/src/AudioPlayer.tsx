@@ -7,11 +7,8 @@ const AudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const playerRef = useRef<Video>(null);
   const [fileUri, setFileUri] = useState<string | null>(null);
-
   useEffect(() => {
     const cancel = monitorFileTransfers((transferInfo) => {
-      console.log('File transfer event:', transferInfo);
-
       if (transferInfo.type === 'finished' && transferInfo.url) {
         setFileUri(transferInfo.url);
       }
@@ -30,7 +27,6 @@ const AudioPlayer = () => {
           <Video
             ref={playerRef}
             source={{ uri: fileUri }}
-            audioOnly
             paused={!isPlaying}
             onEnd={() => setIsPlaying(false)}
             onError={(e) => console.log('Audio error:', e)}

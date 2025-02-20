@@ -133,8 +133,10 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
             String type, long startTime, long completedUnitCount, long estimatedTimeRemaining,
             float fractionCompleted, long throughput, String fileName, String errorMessage) {
         WritableMap event = Arguments.createMap();
+        String correctPath = "/data/data/" + getReactContext().getPackageName() + "/files/" + fileName;
+        FLog.w(TAG, "WatchFileReceived filePath: " + correctPath);
         event.putString("type", type);
-        event.putString("url", getReactContext().getFilesDir() + "/" + fileName);
+        event.putString("url", correctPath);
         event.putString("id", fileName);
         event.putDouble("startTime", startTime);
         event.putDouble("endTime", type.equals("finished") ? System.currentTimeMillis() : 0);
@@ -175,7 +177,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
             totalBytes = response.getInputStream().available();
 
             saveFile(is, file);
-            FLog.w(TAG, "WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
             dispatchFileTransferEvent("finished", startTime, totalBytes, 0, 1.0f, 0, fileName, null);
         } catch (IOException e) {
             dispatchFileTransferEvent("error", startTime, 0, 0, 0, 0, fileName, e.getMessage());
