@@ -9,7 +9,7 @@ import {
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
   monitorFileTransfers,
-  sendFile,
+  startFileTransfer,
   sendMessage,
   watchEvents,
 } from 'react-native-wear-connectivity';
@@ -63,7 +63,7 @@ function CounterScreen() {
       const asset = result.assets[0] || { uri: undefined };
       if (asset.uri) {
         const filePath = asset.uri.replace('file://', '');
-        await sendFile(filePath);
+        await startFileTransfer(filePath, {});
       }
     } catch (error) {
       console.error('Error in sendFileToWear:', error);
