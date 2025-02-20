@@ -1,27 +1,19 @@
 package com.wearconnectivity;
 
-import android.os.Build;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.gms.wearable.MessageClient;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.List;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-import androidx.annotation.RequiresApi;
 
 public class WearConnectivityModule extends WearConnectivitySpec {
 
@@ -58,10 +50,15 @@ public class WearConnectivityModule extends WearConnectivitySpec {
     return NAME;
   }
 
+  /**
+   * send a file to wearOs
+   * @param filePath the path of the file to be sent
+   * @param promise
+   */
   @ReactMethod
-  public void sendFile(String fileName, Promise promise) {
+  public void sendFile(String filePath, Promise promise) {
     if (dataClient != null) {
-      dataClient.sendFile(fileName, promise);
+      dataClient.sendFile(filePath, promise);
     } else {
       promise.reject("E_SEND_FAILED", "Failed to send file");
     }

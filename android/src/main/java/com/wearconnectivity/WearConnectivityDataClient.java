@@ -7,8 +7,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.MessageClient;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -42,8 +40,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
 
     /**
      * Sends a file (as an Asset) using the DataClient API.
-     *
-     * @param path to the file to be sent.
+     * @param uri path to the file to be sent.
      */
     public void sendFile(String uri, Promise promise) {
         File file = new File(uri);
@@ -52,7 +49,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
             FLog.w(TAG, "Failed to create asset from file.");
             return;
         }
-        // Create a DataMapRequest with a defined path.
         PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/file_transfer");
         dataMapRequest.getDataMap().putAsset("file", asset);
         dataMapRequest.getDataMap().putLong("timestamp", System.currentTimeMillis());
@@ -70,7 +66,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
-                // Check for our file transfer path
                 if (item.getUri().getPath().equals("/file_transfer")) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     Asset asset = dataMap.getAsset("file");
@@ -84,7 +79,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
 
     /**
      * Helper method to create an Asset from a file.
-     *
      * @param file the file to convert.
      * @return the resulting Asset, or null if an error occurred.
      */
