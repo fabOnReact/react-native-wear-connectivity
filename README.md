@@ -53,6 +53,8 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
 
 ## React Native API Documentation
 
+The example of implementation available in the [CounterScreen](example/src/CounterScreen/index.android.tsx).
+
 ### Send Messages
 
 ```js
@@ -76,7 +78,10 @@ const unsubscribe = watchEvents.on('message', (message) => {
 ```js
 import { sendFile } from 'react-native-wear-connectivity';
 
-await sendFile(filePath);
+// retrieve the file uri with react-native-image-picker
+await sendFile(
+  'file:///data/user/0/com.wearconnectivityexample/cache/rn_image_picker_lib_temp_2962920f-4cc6-4e4c-b567-5a9f140ae15f.jpg'
+);
 ```
 
 ## Jetpack Compose API Documentation
