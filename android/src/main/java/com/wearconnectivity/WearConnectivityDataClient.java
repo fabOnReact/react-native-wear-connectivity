@@ -68,7 +68,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().equals("/voice_transfer")) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    Asset asset = dataMap.getAsset("file");
+                    Asset asset = dataMap.getAsset("voice");
                     if (asset != null) {
                         receiveFile(asset);
                     }
