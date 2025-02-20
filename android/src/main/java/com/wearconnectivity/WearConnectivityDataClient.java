@@ -106,7 +106,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
             public void onSuccess(DataClient.GetFdForAssetResponse response) {
                 InputStream is = response.getInputStream();
                 if (is == null) {
-                    dispatchEvent("WatchFileReceiveError", "InputStream is null");
+                    FLog.w(TAG,"WatchFileReceiveError " +  "InputStream is null");
                     return;
                 }
                 try {
@@ -124,13 +124,13 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
                     // Dispatch an event with the file path
                     dispatchEvent("WatchFileReceived", file.getAbsolutePath());
                 } catch (IOException e) {
-                    dispatchEvent("WatchFileReceiveError", e.getMessage());
+                    FLog.w(TAG,"WatchFileReceiveError: " + e.getMessage());
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                dispatchEvent("WatchFileReceiveError", e.toString());
+                FLog.w(TAG, "WatchFileReceiveError: " + e.toString());
             }
         });
     }
