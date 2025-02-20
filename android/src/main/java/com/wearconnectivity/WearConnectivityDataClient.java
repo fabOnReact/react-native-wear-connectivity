@@ -1,5 +1,7 @@
 package com.wearconnectivity;
 
+import android.webkit.MimeTypeMap;
+
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -16,6 +18,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLConnection;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -30,6 +35,8 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     private static final String TAG = "WearConnectivityDataClient";
     private DataClient dataClient;
     private static ReactApplicationContext reactContext;
+    private String fileName = "unknowhann_file";
+    private String fileType = "bin";
 
     public WearConnectivityDataClient(ReactApplicationContext context) {
         dataClient = Wearable.getDataClient(context);
@@ -66,9 +73,16 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 DataItem item = event.getDataItem();
-                if (item.getUri().getPath().equals("/voice_transfer")) {
+                if (item.getUri().getPath().equals("/file_transfer")) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    Asset asset = dataMap.getAsset("voice");
+                    // Extract metadata from the DataMap
+                    if (dataMap.containsKey("metadata")) {
+                        DataMap metadata = dataMap.getDataMap("metadata");
+                        fileName = metadata.getString("fileName", "unknown_file");
+                        fileType = metadata.getString("fileType", "bin");
+                    }
+
+                    Asset asset = dataMap.getAsset("file");
                     if (asset != null) {
                         receiveFile(asset);
                     }
@@ -101,44 +115,47 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
 
     private void receiveFile(Asset asset) {
         Task<DataClient.GetFdForAssetResponse> task = dataClient.getFdForAsset(asset);
-        task.addOnSuccessListener(new OnSuccessListener<DataClient.GetFdForAssetResponse>() {
-            @Override
-            public void onSuccess(DataClient.GetFdForAssetResponse response) {
-                InputStream is = response.getInputStream();
-                if (is == null) {
-                    FLog.w(TAG,"WatchFileReceiveError " +  "InputStream is null");
-                    return;
-                }
-                try {
-                    // Save the received file to internal storage. Here, we use "received_file.jpg"
-                    File file = new File(getReactContext().getFilesDir(), "received_file.jpg");
-                    FileOutputStream fos = new FileOutputStream(file);
-                    byte[] buffer = new byte[1024];
-                    int read;
-                    while ((read = is.read(buffer)) != -1) {
-                        fos.write(buffer, 0, read);
-                    }
-                    fos.flush();
-                    fos.close();
-                    is.close();
-                    // Dispatch an event with the file path
-                    FLog.w(TAG,"WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
-                    dispatchEvent("WatchFileReceived", file.getAbsolutePath());
-                } catch (IOException e) {
-                    FLog.w(TAG,"WatchFileReceiveError: " + e.getMessage());
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                FLog.w(TAG, "WatchFileReceiveError: " + e.toString());
-            }
-        });
+        task.addOnSuccessListener(this::handleFileReceived)
+                .addOnFailureListener(this::handleFileReceiveError);
+    }
+
+    private void handleFileReceived(DataClient.GetFdForAssetResponse response) {
+        InputStream is = response.getInputStream();
+        if (is == null) {
+            FLog.w(TAG, "WatchFileReceiveError: InputStream is null");
+            return;
+        }
+
+        try {
+            String fileExtension = detectFileType(is);
+            File file = new File(getReactContext().getFilesDir(), fileName);
+            saveFile(is, file);
+            FLog.w(TAG, "WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
+            dispatchEvent("WatchFileReceived", file.getAbsolutePath());
+        } catch (IOException e) {
+            FLog.w(TAG, "WatchFileReceiveError: " + e.getMessage());
+        }
+    }
+
+    private void handleFileReceiveError(@NonNull Exception e) {
+        FLog.w(TAG, "WatchFileReceiveError: " + e.toString());
     }
 
     private void dispatchEvent(String eventName, String body) {
         getReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, body);
+    }
+
+    private void saveFile(InputStream is, File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = is.read(buffer)) != -1) {
+            fos.write(buffer, 0, read);
+        }
+        fos.flush();
+        fos.close();
+        is.close();
     }
 
     @Override
@@ -154,5 +171,35 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     @Override
     public void onHostDestroy() {
         dataClient.removeListener(this);
+    }
+
+    /**
+     * Converts a MIME type to a file extension.
+     */
+    private String getFileExtensionFromMimeType(String mimeType) {
+        if (mimeType == null) return "";
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+    }
+
+    private String detectFileType(InputStream is) throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(is);
+        bis.mark(10); // Mark the beginning of the stream to reset later
+
+        byte[] header = new byte[10];
+        bis.read(header);
+        bis.reset(); // Reset input stream to allow normal file saving
+
+        // Check for MP3 magic numbers (ID3 Tag)
+        if (header[0] == 'I' && header[1] == 'D' && header[2] == '3') {
+            return "mp3";
+        }
+
+        // Fallback: Try URLConnection detection
+        String mimeType = URLConnection.guessContentTypeFromStream(bis);
+        if (mimeType != null) {
+            return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+        }
+
+        return "bin"; // Default if type is unknown
     }
 }
