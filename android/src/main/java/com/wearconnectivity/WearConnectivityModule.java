@@ -54,6 +54,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
     dataClient = new WearConnectivityDataClient(context);
     Log.d(TAG, CLIENT_ADDED);
     messageClient.addListener();
+    dataClient.addListener();
   }
 
   @Override
@@ -112,6 +113,7 @@ public class WearConnectivityModule extends WearConnectivitySpec
       messageClient.removeListener();
       isListenerAdded = false;
     }
+    messageClient.removeListener();
   }
 
   private List<Node> retrieveNodes(Callback errorCb) {
