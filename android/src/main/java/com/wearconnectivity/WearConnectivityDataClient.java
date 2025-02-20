@@ -35,8 +35,7 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     private static final String TAG = "WearConnectivityDataClient";
     private DataClient dataClient;
     private static ReactApplicationContext reactContext;
-    private String fileName = "unknowhann_file";
-    private String fileType = "bin";
+    private String fileName = "unknown_file";
 
     public WearConnectivityDataClient(ReactApplicationContext context) {
         dataClient = Wearable.getDataClient(context);
@@ -79,7 +78,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
                     if (dataMap.containsKey("metadata")) {
                         DataMap metadata = dataMap.getDataMap("metadata");
                         fileName = metadata.getString("fileName", "unknown_file");
-                        fileType = metadata.getString("fileType", "bin");
                     }
 
                     Asset asset = dataMap.getAsset("file");
@@ -127,7 +125,6 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
         }
 
         try {
-            String fileExtension = detectFileType(is);
             File file = new File(getReactContext().getFilesDir(), fileName);
             saveFile(is, file);
             FLog.w(TAG, "WatchFileReceived file.getAbsolutePath(): " + file.getAbsolutePath());
@@ -171,35 +168,5 @@ public class WearConnectivityDataClient implements DataClient.OnDataChangedListe
     @Override
     public void onHostDestroy() {
         dataClient.removeListener(this);
-    }
-
-    /**
-     * Converts a MIME type to a file extension.
-     */
-    private String getFileExtensionFromMimeType(String mimeType) {
-        if (mimeType == null) return "";
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-    }
-
-    private String detectFileType(InputStream is) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-        bis.mark(10); // Mark the beginning of the stream to reset later
-
-        byte[] header = new byte[10];
-        bis.read(header);
-        bis.reset(); // Reset input stream to allow normal file saving
-
-        // Check for MP3 magic numbers (ID3 Tag)
-        if (header[0] == 'I' && header[1] == 'D' && header[2] == '3') {
-            return "mp3";
-        }
-
-        // Fallback: Try URLConnection detection
-        String mimeType = URLConnection.guessContentTypeFromStream(bis);
-        if (mimeType != null) {
-            return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-        }
-
-        return "bin"; // Default if type is unknown
     }
 }
