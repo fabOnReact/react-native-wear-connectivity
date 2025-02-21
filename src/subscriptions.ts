@@ -2,16 +2,12 @@ import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import type { AddListener, WatchEvents } from './types';
 import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
-const _addListener: AddListener = (event, cb, reply) => {
+const _addListener: AddListener = (event, cb) => {
   const nativeWatchEventEmitter = new NativeEventEmitter(
     NativeModules.AndroidWearCommunication
   );
   if (!event) {
     throw new Error('Must pass event');
-  }
-
-  if (reply != null) {
-    console.log('watchEvents.on does not support reply on Android');
   }
 
   switch (event) {

@@ -1,14 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Button,
-  DeviceEventEmitter,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, Button } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
-  monitorFileTransfers,
   startFileTransfer,
   sendMessage,
   watchEvents,

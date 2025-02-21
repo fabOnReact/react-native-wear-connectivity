@@ -33,8 +33,8 @@ const WearConnectivity = WearConnectivityModule
       }
     );
 
-const startFileTransfer: SendFile = (file, metadata) => {
-  return WearConnectivity.sendFile(file);
+const startFileTransfer: SendFile = (file, _metadata) => {
+  return WearConnectivity.sendFile(file, _metadata);
 };
 
 export { startFileTransfer, sendMessage, watchEvents, WearConnectivity };
