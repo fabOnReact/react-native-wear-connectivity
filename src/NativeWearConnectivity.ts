@@ -21,6 +21,11 @@ export type SendGenuineMessage = (
 ) => void;
 
 export type GetNodes = (
+  cb?: ReplyWithNodesCallback,
+  errCb?: ErrorCallback
+) => void;
+
+export type GetNodesBasedOnCapability = (
   capability: string,
   cb?: ReplyWithNodesCallback,
   errCb?: ErrorCallback
@@ -36,8 +41,9 @@ export type OpenRemoteURI = (
 export interface Spec extends TurboModule {
   sendMessage: SendMessage;
   sendGenuineMessage: SendGenuineMessage;
-  getCapableAndReachableNodes: GetNodes;
-  getNonCapableAndReachableNodes: GetNodes;
+  getReachableNodes: GetNodes;
+  getCapableAndReachableNodes: GetNodesBasedOnCapability;
+  getNonCapableAndReachableNodes: GetNodesBasedOnCapability;
   openRemoteURI: OpenRemoteURI;
 }
 

@@ -1,5 +1,8 @@
 import { Platform } from 'react-native';
-import type { GetNodes } from './NativeWearConnectivity';
+import type {
+  GetNodes,
+  GetNodesBasedOnCapability,
+} from './NativeWearConnectivity';
 import { WearConnectivity } from './index';
 import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
@@ -17,7 +20,20 @@ const defaultErrCb = (err: string) => {
   console.warn(UNHANDLED_CALLBACK + UNHANDLED_CALLBACK_ERROR, err);
 };
 
-const getCapableAndReachableNodes: GetNodes = (capability, cb, errCb) => {
+const getReachableNodes: GetNodes = (cb, errCb) => {
+  const callbackWithDefault = cb ?? defaultReplyCb;
+  const errCbWithDefault = errCb ?? defaultErrCb;
+  return WearConnectivity.getReachableNodes(
+    callbackWithDefault,
+    errCbWithDefault
+  );
+};
+
+const getCapableAndReachableNodes: GetNodesBasedOnCapability = (
+  capability,
+  cb,
+  errCb
+) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
   const errCbWithDefault = errCb ?? defaultErrCb;
   return WearConnectivity.getCapableAndReachableNodes(
@@ -27,7 +43,11 @@ const getCapableAndReachableNodes: GetNodes = (capability, cb, errCb) => {
   );
 };
 
-const getNonCapableAndReachableNodes: GetNodes = (capability, cb, errCb) => {
+const getNonCapableAndReachableNodes: GetNodesBasedOnCapability = (
+  capability,
+  cb,
+  errCb
+) => {
   const callbackWithDefault = cb ?? defaultReplyCb;
   const errCbWithDefault = errCb ?? defaultErrCb;
   return WearConnectivity.getNonCapableAndReachableNodes(
@@ -37,18 +57,26 @@ const getNonCapableAndReachableNodes: GetNodes = (capability, cb, errCb) => {
   );
 };
 
-const capabilityMock: GetNodes = () =>
+const nodesMock: GetNodes = () =>
+  console.warn(LIBRARY_NAME + 'nodes' + IOS_NOT_SUPPORTED_WARNING);
+
+const nodesWithCapabilityMock: GetNodesBasedOnCapability = () =>
   console.warn(LIBRARY_NAME + 'capability' + IOS_NOT_SUPPORTED_WARNING);
 
-let getCapableAndReachableNodesExport: GetNodes = capabilityMock;
-let getNonCapableAndReachableNodesExport: GetNodes = capabilityMock;
+let getReachableNodesExport: GetNodes = nodesMock;
+let getCapableAndReachableNodesExport: GetNodesBasedOnCapability =
+  nodesWithCapabilityMock;
+let getNonCapableAndReachableNodesExport: GetNodesBasedOnCapability =
+  nodesWithCapabilityMock;
 
 if (Platform.OS !== 'ios') {
+  getReachableNodesExport = getReachableNodes;
   getCapableAndReachableNodesExport = getCapableAndReachableNodes;
   getNonCapableAndReachableNodesExport = getNonCapableAndReachableNodes;
 }
 
 export {
+  getReachableNodesExport as getReachableNodes,
   getCapableAndReachableNodesExport as getCapableAndReachableNodes,
   getNonCapableAndReachableNodesExport as getNonCapableAndReachableNodes,
 };

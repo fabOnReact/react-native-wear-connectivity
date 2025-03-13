@@ -2,6 +2,7 @@ import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage, sendGenuineMessage } from './messages';
 import {
+  getReachableNodes,
   getCapableAndReachableNodes,
   getNonCapableAndReachableNodes,
 } from './capability';
@@ -36,6 +37,7 @@ export {
   sendMessage,
   sendGenuineMessage,
   watchEvents,
+  getReachableNodes,
   getCapableAndReachableNodes,
   getNonCapableAndReachableNodes,
   openRemoteURI,
