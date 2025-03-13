@@ -174,13 +174,28 @@ public class WearConnectivityModule extends WearConnectivitySpec
 
   private WritableArray _getWritableNodes(List<Node> nodes) {
     return Arguments.makeNativeArray(
-      nodes.stream().map(node -> {
-        Map<String, String> nodeObj = new HashMap<>();
-        nodeObj.put("displayName", node.getDisplayName());
-        nodeObj.put("id", node.getId());
-        return nodeObj;
-      }).collect(Collectors.toList())
-    );
+        nodes.stream().map(node -> {
+          Map<String, String> nodeObj = new HashMap<>();
+          nodeObj.put("displayName", node.getDisplayName());
+          nodeObj.put("id", node.getId());
+          return nodeObj;
+        }).collect(Collectors.toList()));
+  }
+  
+  @ReactMethod
+  public void getReachableNodes(Callback replyCb, Callback errorCb) {
+    try {
+      List<Node> connectedNodes = new ArrayList(_retrieveNodes());
+
+      replyCb.invoke(_getWritableNodes(connectedNodes));
+    } catch (CancellationException cancellationException) {
+      Log.d(TAG, "Reachable request was cancelled. \n reason : " + cancellationException.getMessage());
+      errorCb.invoke("Reachable request was cancelled. \n reason : " + cancellationException.getMessage());
+    } catch (Throwable throwable) {
+      Log.d(TAG, "Reachable request failed to return any results. \n reason : " + throwable.getMessage());
+      throwable.printStackTrace();
+      errorCb.invoke("Reachable request failed to return any results. \n reason : " + throwable.getMessage());
+    }
   }
 
   @ReactMethod

@@ -125,6 +125,29 @@ const unsubscribe = watchEvents.on('message', (message) => {
 });
 ```
 
+### Get reachable Nodes
+
+On the react-native phone app:
+
+```js
+import { getReachableNodes } from 'react-native-wear-connectivity';
+
+type AndroidNode = {
+  displayName: String,
+  id: String,
+};
+
+getReachableNodes(
+  (reachableNodes: AndroidNode[]) => {
+    reachableNodes?.forEach(({ displayName, id }: AndroidNode) => {
+      // do what you need with reachable nodes
+    });
+  },
+  (error: String) =>
+    console.error('message sent and received with error: ', error)
+);
+```
+
 ### Get Nodes based on Capabilities
 
 On the watch app: res/values/wear.xml
