@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.JSONArguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
@@ -66,7 +67,7 @@ public class WearConnectivityMessageClient implements MessageClient.OnMessageRec
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
         try {
             JSONObject jsonObject = new JSONObject(messageEvent.getPath());
-            WritableMap messageAsWritableMap = (WritableMap) JSONToWritableMap.fromJSONObject(jsonObject);
+            WritableMap messageAsWritableMap = (WritableMap) JSONArguments.fromJSONObject(jsonObject);
             String event = jsonObject.getString("event");
             FLog.w(TAG, TAG + " event: " + event + " message: " + messageAsWritableMap);
             Intent service = new Intent(reactContext, com.wearconnectivity.WearConnectivityTask.class);
