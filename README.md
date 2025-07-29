@@ -2,7 +2,11 @@
 
 Allows you to connect React Native Mobile apps with WearOS.
 
-https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
+
+
+https://github.com/user-attachments/assets/6b14686d-6693-4391-9cc2-b7caf07e9533
+
+
 
 **Note**: Refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
