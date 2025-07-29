@@ -2,7 +2,9 @@
 
 Allows you to connect React Native Mobile apps with WearOS.
 
-https://github.com/user-attachments/assets/100ee026-550f-4d84-b180-58874ae2b395
+| Sending Voice Message    | Sending Text |
+| ----------- | ----------- |
+| <video src="https://github.com/user-attachments/assets/6b14686d-6693-4391-9cc2-b7caf07e9533" width="1000" />     | <video src="https://github.com/user-attachments/assets/03477afa-843b-450e-8e15-f8d2e827ce79" width="1000" />         |
 
 **Note**: Refer to [react-native-watch-connectivity][2] for Apple Watch development.
 
