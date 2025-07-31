@@ -41,14 +41,30 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
     <!-- ADD THIS PERMISSIONS -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <!-- Needed for Wear communication via Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <!-- END OF THE CHANGES -->
 
     <application>
         <!-- ADD THIS SERVICE -->
-        <service android:name="com.wearconnectivity.WearConnectivityTask"
-          android:permission="android.permission.BIND_JOB_SERVICE"
-          android:exported="true" />
+        <!-- Before Android 14 -->
+        <!-- <service android:name="com.wearconnectivity.WearConnectivityTask"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+        android:exported="true" /> -->
+  
+        <!-- Since Android 14 -->
+        <service
+          android:name="com.wearconnectivity.WearConnectivityTask"
+          android:exported="false"
+          android:foregroundServiceType="dataSync|connectedDevice"
+          android:permission="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
         <!-- END OF THE CHANGES -->
+
     </application>
 </manifest>
 ```
