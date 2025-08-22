@@ -10,7 +10,7 @@ import type {
   ReplyCallback,
   ErrorCallback,
 } from 'react-native-wear-connectivity';
-import AudioPlayer from '../AudioPlayer';
+import AudioPlayer from './AudioPlayer';
 
 function CounterScreen() {
   const [disabled, setDisabled] = React.useState(false);
