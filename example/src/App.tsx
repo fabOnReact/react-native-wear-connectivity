@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, PermissionsAndroid } from 'react-native';
-import { CounterScreen } from './CounterScreen';
+import CounterScreen from './CounterScreen';
 
 async function requestBluetoothPermissions() {
   if (Platform.OS === 'android' && Platform.Version >= 31) {
