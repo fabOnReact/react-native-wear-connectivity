@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform, PermissionsAndroid } from 'react-native';
-import { default as CounterScreenAndroid } from './CounterScreen/index.android';
-import { default as CounterScreenIos } from './CounterScreen/index.ios';
+import { CounterScreen } from './CounterScreen';
 
 async function requestBluetoothPermissions() {
   if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -19,8 +18,6 @@ const App = () => {
     requestBluetoothPermissions();
   }, []);
 
-  const CounterScreen =
-    Platform.OS === 'ios' ? CounterScreenIos : CounterScreenAndroid;
   return <CounterScreen />;
 };
 

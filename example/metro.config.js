@@ -1,45 +1,57 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
-const escape = require('escape-string-regexp');
-const exclusionList = require('metro-config/src/defaults/exclusionList');
-const pak = require('../package.json');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
-const root = path.resolve(__dirname, '..');
-const modules = Object.keys({ ...pak.peerDependencies });
+// Try to use the public helper if present; otherwise build a single RegExp.
+// This keeps us compatible with older/newer Metro without private imports.
+let makeBlockList;
+try {
+  const mc = require('metro-config');
+  makeBlockList = mc.exclusionList || mc.blockList;
+} catch {
+  /* noop */
+}
+if (!makeBlockList) {
+  makeBlockList = (list) =>
+    new RegExp(
+      list.map((r) => (r instanceof RegExp ? r.source : String(r))).join('|')
+    );
+}
 
-/**
- * Metro configuration
- * https://facebook.github.io/metro/docs/configuration
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {
-  watchFolders: [root],
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, '..');
 
-  // We need to make sure that only one version is loaded for peerDependencies
-  // So we block them at the root, and alias them to the versions in example's node_modules
+// Typical Bob extraNodeModules mapping for example apps (ensures peers resolve from example)
+const pkg = require('../package.json');
+const modules = Object.keys({
+  ...(pkg.peerDependencies || {}),
+  ...(pkg.dependencies || {}),
+}).reduce((acc, name) => {
+  acc[name] = path.join(projectRoot, 'node_modules', name);
+  return acc;
+}, {});
+
+const defaultConfig = getDefaultConfig(projectRoot);
+
+module.exports = mergeConfig(defaultConfig, {
+  projectRoot,
+  watchFolders: [workspaceRoot],
   resolver: {
-    blacklistRE: exclusionList(
-      modules.map(
-        (m) =>
-          new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
-      )
-    ),
-
-    extraNodeModules: modules.reduce((acc, name) => {
-      acc[name] = path.join(__dirname, 'node_modules', name);
-      return acc;
-    }, {}),
+    blockList: makeBlockList([
+      // don’t traverse the repo root’s node_modules
+      new RegExp(
+        `${path
+          .resolve(workspaceRoot, 'node_modules')
+          .replace(/[/\\]/g, '[\\\\/]')}.*`
+      ),
+      // ignore built outputs if you have any
+      new RegExp(
+        `${path.resolve(workspaceRoot, 'lib').replace(/[/\\]/g, '[\\\\/]')}.*`
+      ),
+      new RegExp(
+        `${path.resolve(workspaceRoot, 'dist').replace(/[/\\]/g, '[\\\\/]')}.*`
+      ),
+    ]),
+    extraNodeModules: modules,
+    nodeModulesPaths: [path.join(projectRoot, 'node_modules')],
   },
-
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
-};
-
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+});

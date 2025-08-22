@@ -4683,7 +4683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/metro-config@npm:0.81.0":
+"@react-native/metro-config@npm:^0.81.0":
   version: 0.81.0
   resolution: "@react-native/metro-config@npm:0.81.0"
   dependencies:
@@ -8556,7 +8556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.3.2":
+"fast-glob@npm:^3.3.2, fast-glob@npm:^3.3.3":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -13675,6 +13675,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-monorepo-config@npm:^0.1.9":
+  version: 0.1.9
+  resolution: "react-native-monorepo-config@npm:0.1.9"
+  dependencies:
+    escape-string-regexp: ^5.0.0
+    fast-glob: ^3.3.3
+  checksum: 6356c362c517c49e17d54ee764c3566ba71491fa0d755618ecf2ca548348668e84fe448c24066645983acbc2bd4c0ed47594f9b3ec9dcc0558c0fd9594d2391e
+  languageName: node
+  linkType: hard
+
 "react-native-phone-connectivity-example@workspace:example":
   version: 0.0.0-use.local
   resolution: "react-native-phone-connectivity-example@workspace:example"
@@ -13687,7 +13697,7 @@ __metadata:
     "@react-native-community/cli-platform-ios": 20.0.0
     "@react-native/babel-preset": 0.81.0
     "@react-native/eslint-config": 0.81.0
-    "@react-native/metro-config": 0.81.0
+    "@react-native/metro-config": ^0.81.0
     "@react-native/typescript-config": 0.81.0
     "@types/jest": ^29.5.13
     "@types/react": ^19.1.9
@@ -13697,19 +13707,20 @@ __metadata:
     react: 19.1.0
     react-native: 0.81.0
     react-native-image-picker: ^8.1.0
-    react-native-video: ^6.10.1
+    react-native-monorepo-config: ^0.1.9
+    react-native-video: ^6.16.1
     react-test-renderer: 19.1.0
     typescript: ^5.8.3
   languageName: unknown
   linkType: soft
 
-"react-native-video@npm:^6.10.1":
-  version: 6.10.1
-  resolution: "react-native-video@npm:6.10.1"
+"react-native-video@npm:^6.16.1":
+  version: 6.16.1
+  resolution: "react-native-video@npm:6.16.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 9ffe4b10b623b7954ed0d3e26da44c574a8def78290819ea84e3d36a9be034e69e82ceb5c40c186a86a575fb601759ddfddecd57798bd19b7d36ada3e7e4e133
+  checksum: 40de297ed35527bf2cd77827c9842d51e84df78fbd0a7697235f8d0ca02de2b1a4562e9d3323391d514a9591a5078b10b26eac501ee7eb9a2a7c0c2ae45a90f5
   languageName: node
   linkType: hard
 
