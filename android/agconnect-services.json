@@ -1,0 +1,12 @@
+{
+  "app_id": "00000000000000000000000000000000",
+  "cp_id": "00000000000000000000000000000000",
+  "client": {
+    "client_info": {
+      "mobilesdk_app_id": "00000000000000000000000000000000",
+      "package_name": "com.example.app"
+    },
+    "oauth_client": []
+  },
+  "configuration_version": "1.0"
+}
