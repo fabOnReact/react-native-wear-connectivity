@@ -65,8 +65,48 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
           android:permission="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
         <!-- END OF THE CHANGES -->
 
-    </application>
+  </application>
 </manifest>
+```
+
+### Wear OS application setup
+
+To communicate from a React Native Wear OS app, add the library to your watch
+project and declare the Wear OS feature in the manifest:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-feature android:name="android.hardware.type.watch" />
+</manifest>
+```
+
+Example component that sends a message to the paired phone and updates the UI
+when a message is received:
+
+```tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+
+export default function WearApp() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = watchEvents.on('message', () => {
+      setCount((c) => c + 1);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <View>
+      <Text>The count is {count}</Text>
+      <Button title="press" onPress={() => sendMessage({ text: 'hello' })} />
+    </View>
+  );
+}
 ```
 
 ## React Native API Documentation

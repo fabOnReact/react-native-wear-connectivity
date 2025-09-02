@@ -2,6 +2,7 @@ import { AppRegistry } from 'react-native';
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
+import WearOSConnector from './wearos/WearOSConnector';
 import type {
   ReplyCallback,
   ErrorCallback,
@@ -37,7 +38,13 @@ const startFileTransfer: SendFile = (file, _metadata) => {
   return WearConnectivity.sendFile(file, _metadata);
 };
 
-export { startFileTransfer, sendMessage, watchEvents, WearConnectivity };
+export {
+  startFileTransfer,
+  sendMessage,
+  watchEvents,
+  WearConnectivity,
+  WearOSConnector,
+};
 export type { ReplyCallback, ErrorCallback };
 
 type WearParameters = {
