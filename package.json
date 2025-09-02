@@ -94,7 +94,9 @@
     "node": ">= 18.0.0"
   },
   "jest": {
-    "preset": "react-native",
+    "transform": {
+      "^.+\\.[tj]sx?$": "babel-jest"
+    },
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
@@ -124,10 +126,18 @@
   },
   "eslintConfig": {
     "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint", "prettier"],
     "extends": [
-      "@react-native",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
       "prettier"
     ],
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module",
+      "ecmaFeatures": { "jsx": true }
+    },
     "rules": {
       "prettier/prettier": [
         "error",
@@ -138,12 +148,19 @@
           "trailingComma": "es5",
           "useTabs": false
         }
-      ]
+      ],
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-var-requires": "off"
     }
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "babel.config.js",
+    "example/",
+    "watch-example/"
   ],
   "prettier": {
     "quoteProps": "consistent",
