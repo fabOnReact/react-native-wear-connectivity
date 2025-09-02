@@ -1,5 +1,9 @@
 import { Platform } from 'react-native';
-import type { SendMessage, Payload } from './NativeWearConnectivity';
+import type {
+  SendMessage,
+  SendMessageAsync,
+  Payload,
+} from './NativeWearConnectivity';
 import { WearConnectivity } from './index';
 import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
 
@@ -28,12 +32,24 @@ const sendMessage: SendMessage = (message, cb, errCb) => {
   );
 };
 
+const sendMessageAsync: SendMessageAsync = (message) => {
+  const json: Payload = { ...message, event: 'message' };
+  return WearConnectivity.sendMessageAsync(json);
+};
+
 const sendMessageMock: SendMessage = () =>
   console.warn(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
 
+const sendMessageAsyncMock: SendMessageAsync = () => {
+  console.warn(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
+  return Promise.reject(LIBRARY_NAME + 'message' + IOS_NOT_SUPPORTED_WARNING);
+};
+
 let sendMessageExport: SendMessage = sendMessageMock;
+let sendMessageAsyncExport: SendMessageAsync = sendMessageAsyncMock;
 if (Platform.OS !== 'ios') {
   sendMessageExport = sendMessage;
+  sendMessageAsyncExport = sendMessageAsync;
 }
 
-export { sendMessageExport as sendMessage };
+export { sendMessageExport as sendMessage, sendMessageAsyncExport as sendMessageAsync };

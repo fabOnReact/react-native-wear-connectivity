@@ -69,6 +69,38 @@ public class WearConnectivityModule extends WearConnectivitySpec {
     }
   }
 
+  /**
+   * Sends a message and resolves or rejects a promise.
+   */
+  @ReactMethod
+  public void sendMessageAsync(ReadableMap messageData, Promise promise) {
+    Callback errorCb = new Callback() {
+      @Override
+      public void invoke(Object... args) {
+        String message = (args != null && args.length > 0) ? args[0].toString() : "";
+        promise.reject("E_SEND_MESSAGE_FAILED", message);
+      }
+    };
+
+    List<Node> connectedNodes = retrieveNodes(errorCb);
+    if (connectedNodes == null) {
+      return;
+    }
+
+    if (!connectedNodes.isEmpty()) {
+      Callback replyCb = new Callback() {
+        @Override
+        public void invoke(Object... args) {
+          Object reply = (args != null && args.length > 0) ? args[0] : null;
+          promise.resolve(reply);
+        }
+      };
+      messageClient.sendMessage(messageData, connectedNodes, replyCb, errorCb);
+    } else {
+      promise.reject("E_NO_NODES", NO_NODES_FOUND);
+    }
+  }
+
   private List<Node> retrieveNodes(Callback errorCb) {
     try {
       int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactContext());

@@ -78,11 +78,15 @@ The example of implementation available in the [CounterScreen](example/src/Count
 https://mtford.co.uk/projects/react-native-watch-connectivity/docs/communication/
 
 ```js
-import { sendMessage } from 'react-native-wear-connectivity';
+import { sendMessage, sendMessageAsync } from 'react-native-wear-connectivity';
 
+// Callback API
 sendMessage({ text: 'Hello watch!' }, (reply) => {
   console.log(reply); // {"text": "Hello React Native app!"}
 });
+
+// Promise API
+await sendMessageAsync({ text: 'Hello watch!' });
 ```
 
 ### Receive Messages
@@ -291,13 +295,20 @@ useEffect(() => {
 
 **Sending messages from React Native Mobile Device to Jetpack Compose WearOS**
 
-The React Native Mobile App Example sends messages to the WearOS Jetpack Compose example with [sendMessage](https://github.com/fabOnReact/react-native-wear-connectivity/blob/2f936622422e197c22bef228b44eb24b46c878ae/example/src/CounterScreen/index.android.tsx#L29-L33).
+The React Native Mobile App Example sends messages to the WearOS Jetpack Compose example with `sendMessageAsync` (a Promise based API). The callback based `sendMessage` is still available for backward compatibility.
 
 ```javascript
-const sendMessageToWear = () => {
+import { sendMessageAsync } from 'react-native-wear-connectivity';
+
+const sendMessageToWear = async () => {
   setDisabled(true);
   const json = { text: 'hello' };
-  sendMessage(json, onSuccess, onError);
+  try {
+    await sendMessageAsync(json);
+    onSuccess('message sent');
+  } catch (error) {
+    onError(error);
+  }
 };
 ```
 
