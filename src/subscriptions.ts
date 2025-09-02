@@ -1,8 +1,8 @@
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import type { AddListener, WatchEvents } from './types';
-import { LIBRARY_NAME, IOS_NOT_SUPPORTED_WARNING } from './constants';
+import { appleWatchEvents } from './applewatch/AppleWatchConnector';
 
-const _addListener: AddListener = (event, cb) => {
+const androidAddListener: AddListener = (event, cb) => {
   const nativeWatchEventEmitter = new NativeEventEmitter(
     NativeModules.AndroidWearCommunication
   );
@@ -21,20 +21,33 @@ const _addListener: AddListener = (event, cb) => {
   return () => sub.remove();
 };
 
-const _addListenerMock: AddListener = () => {
-  console.warn(LIBRARY_NAME + 'watchEvents' + IOS_NOT_SUPPORTED_WARNING);
-  return () => {};
+const iosAddListener: AddListener = (event, cb) => {
+  if (!event) {
+    throw new Error('Must pass event');
+  }
+
+  switch (event) {
+    case 'message':
+      break;
+    default:
+      throw new Error(`Unknown watch event "${event}"`);
+  }
+
+  const sub = appleWatchEvents.addListener(event, cb);
+  return () => sub.remove();
 };
 
-let watchEvents: WatchEvents = {
-  addListener: _addListenerMock,
-  on: _addListenerMock,
-};
+let watchEvents: WatchEvents;
 
-if (Platform.OS !== 'ios') {
+if (Platform.OS === 'ios') {
   watchEvents = {
-    addListener: _addListener,
-    on: _addListener,
+    addListener: iosAddListener,
+    on: iosAddListener,
+  };
+} else {
+  watchEvents = {
+    addListener: androidAddListener,
+    on: androidAddListener,
   };
 }
 
