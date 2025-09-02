@@ -55,6 +55,7 @@ public class WearConnectivityMessageClient implements MessageClient.OnMessageRec
                 return;
             }
         }
+        errorCb.invoke("No nearby nodes found");
     }
 
     /**
