@@ -50,6 +50,9 @@
     "url": "https://github.com/fabOnReact/react-native-wear-connectivity/issues"
   },
   "homepage": "https://github.com/fabOnReact/react-native-wear-connectivity#readme",
+  "dependencies": {
+    "react-native-garmin-connect": "^0.1.0"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

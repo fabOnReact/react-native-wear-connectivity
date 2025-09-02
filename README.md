@@ -69,6 +69,28 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
 </manifest>
 ```
 
+### Garmin setup
+
+To enable Garmin devices, install the Garmin connector and include the Garmin
+SDK binaries in your project:
+
+```sh
+yarn add react-native-garmin-connect
+```
+
+Download the Garmin SDK from the Garmin developer portal and copy the provided
+`ConnectIQ.jar` (or latest `.aar`) into your `android/app/libs` directory.  Add
+the dependency inside `android/app/build.gradle`:
+
+```gradle
+dependencies {
+  implementation files('libs/ConnectIQ.jar')
+}
+```
+
+Rebuild the Android project after adding the SDK files to ensure the Garmin
+library is linked correctly.
+
 ## React Native API Documentation
 
 The example of implementation available in the [CounterScreen](example/src/CounterScreen/index.android.tsx).
