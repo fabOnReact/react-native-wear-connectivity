@@ -1,5 +1,9 @@
 package com.wearconnectivity;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +36,8 @@ public class JSONToWritableMap {
         result.putInt(key, (Integer) val);
       } else if (val instanceof Double) {
         result.putDouble(key, (Double) val);
+      } else if (val instanceof Float) {
+        result.putDouble(key, ((Float) val).doubleValue());
       } else if (val instanceof Long) {
         result.putInt(key, ((Long) val).intValue());
       } else if (obj.isNull(key)) {
@@ -39,6 +45,40 @@ public class JSONToWritableMap {
       } else {
         // Unknown value type. Will throw
         throw new JSONException("Unexpected value when parsing JSON object. key: " + key);
+      }
+    }
+
+    return result;
+  }
+
+  private static WritableArray fromJSONArray(JSONArray arr) throws JSONException {
+    WritableArray result = Arguments.createArray();
+
+    for (int i = 0; i < arr.length(); i++) {
+      if (arr.isNull(i)) {
+        result.pushNull();
+        continue;
+      }
+
+      Object val = arr.get(i);
+      if (val instanceof JSONObject) {
+        result.pushMap(fromJSONObject((JSONObject) val));
+      } else if (val instanceof JSONArray) {
+        result.pushArray(fromJSONArray((JSONArray) val));
+      } else if (val instanceof String) {
+        result.pushString((String) val);
+      } else if (val instanceof Boolean) {
+        result.pushBoolean((Boolean) val);
+      } else if (val instanceof Integer) {
+        result.pushInt((Integer) val);
+      } else if (val instanceof Long) {
+        result.pushInt(((Long) val).intValue());
+      } else if (val instanceof Double) {
+        result.pushDouble((Double) val);
+      } else if (val instanceof Float) {
+        result.pushDouble(((Float) val).doubleValue());
+      } else {
+        throw new JSONException("Unexpected value when parsing JSON array at index: " + i);
       }
     }
 

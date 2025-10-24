@@ -15,7 +15,7 @@
     "react-native-image-picker": "^8.1.0",
     "react-native-monorepo-config": "^0.1.9",
     "react-native-video": "^6.16.1",
-    "react-native-wear-connectivity": "file:.."
+    "react-native-wear-connectivity": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
