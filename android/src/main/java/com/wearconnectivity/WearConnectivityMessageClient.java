@@ -40,6 +40,7 @@ public class WearConnectivityMessageClient implements MessageClient.OnMessageRec
         this.reactContext = context;
         this.messageClient = Wearable.getMessageClient(context);
         messageClient.addListener(this);
+        isListenerAdded = true;
         context.addLifecycleEventListener(this);
     }
 

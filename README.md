@@ -23,6 +23,8 @@ Allows you to connect React Native Mobile apps with WearOS.
 
 ## Installation
 
+**React Native 0.82**: install `react-native-wear-connectivity@0.1.16`.
+
 ```sh
 yarn add react-native-wear-connectivity
 ```
