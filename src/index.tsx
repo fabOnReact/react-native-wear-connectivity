@@ -1,5 +1,6 @@
 import { AppRegistry } from 'react-native';
 import { NativeModules, Platform } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
 import type {
@@ -7,7 +8,7 @@ import type {
   ErrorCallback,
   SendFile,
 } from './NativeWearConnectivity';
-import { DeviceEventEmitter } from 'react-native';
+import { detectConnector, getConnector, DeviceType } from './utilities';
 
 const LINKING_ERROR =
   `The package 'react-native-wear-connectivity' doesn't seem to be linked. Make sure: \n\n` +
@@ -37,7 +38,15 @@ const startFileTransfer: SendFile = (file, _metadata) => {
   return WearConnectivity.sendFile(file, _metadata);
 };
 
-export { startFileTransfer, sendMessage, watchEvents, WearConnectivity };
+export {
+  startFileTransfer,
+  sendMessage,
+  watchEvents,
+  WearConnectivity,
+  detectConnector,
+  getConnector,
+  DeviceType,
+};
 export type { ReplyCallback, ErrorCallback };
 
 type WearParameters = {
