@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Button } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {
   startFileTransfer,
-  sendMessage,
+  sendMessageAsync,
   watchEvents,
 } from 'react-native-wear-connectivity';
 import type {
@@ -32,10 +32,15 @@ function CounterScreen() {
   };
   const onError: ErrorCallback = (error) => console.log(error);
 
-  const sendMessageToWear = () => {
+  const sendMessageToWear = async () => {
     setDisabled(true);
     const json = { text: 'hello' };
-    sendMessage(json, onSuccess, onError);
+    try {
+      const result = await sendMessageAsync(json);
+      onSuccess(result);
+    } catch (error) {
+      onError(String(error));
+    }
   };
 
   const sendFileToWear = async () => {

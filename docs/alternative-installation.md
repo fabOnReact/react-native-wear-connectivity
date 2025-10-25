@@ -103,7 +103,7 @@ Example implementation of the above counter application for WearOS and Android M
 ```js
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
+import { sendMessage, sendMessageAsync, watchEvents } from 'react-native-wear-connectivity';
 
 function App() {
   return <CounterScreen />;
@@ -130,9 +130,20 @@ function CounterScreen() {
     sendMessage(json, onSuccess, onError);
   };
 
+  const sendMessageToWearAsync = async () => {
+    const json = { text: 'hello' };
+    try {
+      const result = await sendMessageAsync(json);
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Button title="increase counter" onPress={sendMessageToWear} />
+      <Button title="increase counter async" onPress={sendMessageToWearAsync} />
       <Text style={styles.count}>The count is {count}</Text>
     </View>
   );
@@ -166,9 +177,13 @@ export default App;
 ### Send Messages
 
 ```js
-import { sendMessage } from 'react-native-wear-connectivity';
+import { sendMessage, sendMessageAsync } from 'react-native-wear-connectivity';
 
+// Callback based API
 sendMessage({ text: 'Hello watch!' });
+
+// Promise based API
+await sendMessageAsync({ text: 'Hello watch!' });
 ```
 
 ### Receive Messages
