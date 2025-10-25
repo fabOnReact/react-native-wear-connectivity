@@ -18,6 +18,7 @@ Allows you to connect React Native Mobile apps with WearOS.
 - [Jetpack Compose API Documentation](#jetpack-compose-api-documentation)
 - [How to run the example](#how-to-run-the-example)
 - [Alternative methods of installation](#alternative-methods-of-installation)
+- [Huawei Setup](#huawei-setup)
 - [FAQ on Troubleshooting Errors](#faq-on-troubleshooting-errors)
 - [Contributing](#contributing)
 
@@ -322,6 +323,10 @@ You can copy the [implementation](https://github.com/fabOnReact/wearos-communica
 ## Alternative methods of installation
 
 The instructions for writing the WearOS apps with react-native are available at [alternative-installation.md](docs/alternative-installation.md). React Native does not officially support WearOS, some essential components like CircularScrollView are not available in React Native. More info in Issues https://github.com/fabOnReact/react-native-wear-connectivity/issues/12 and https://github.com/andrew-levy/jetpack-compose-react-native/issues/9.
+
+## Huawei Setup
+
+Instructions for integrating Huawei wearables and HMS Core are available in [docs/huawei-setup.md](docs/huawei-setup.md).
 
 ## FAQ on Troubleshooting Errors
 
