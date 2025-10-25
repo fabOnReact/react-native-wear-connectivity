@@ -1,12 +1,14 @@
 # react-native-wear-connectivity
 
-Allows you to connect React Native Mobile apps with WearOS.
+Allows you to connect React Native Mobile apps with WearOS and Apple Watch.
 
 | Sending Voice Message (enable audio)    | Sending Text |
 | ----------- | ----------- |
 | <video src="https://github.com/user-attachments/assets/6b14686d-6693-4391-9cc2-b7caf07e9533" width="1000" />     | <video src="https://github.com/user-attachments/assets/03477afa-843b-450e-8e15-f8d2e827ce79" width="1000" />         |
 
-**Note**: Refer to [react-native-watch-connectivity][2] for Apple Watch development.
+Apple Watch support is provided through [react-native-watch-connectivity][2].
+See the [Apple Watch Setup](docs/applewatch-setup.md) guide for details on Xcode
+configuration, entitlements, and pairing instructions.
 
 [1]: https://wearos.google.com
 [2]: https://github.com/mtford90/react-native-watch-connectivity
@@ -14,6 +16,7 @@ Allows you to connect React Native Mobile apps with WearOS.
 # Table of Contents
 
 - [Installation](#installation)
+- [Apple Watch Setup](#apple-watch-setup)
 - [React Native API Documentation](#react-native-api-documentation)
 - [Jetpack Compose API Documentation](#jetpack-compose-api-documentation)
 - [How to run the example](#how-to-run-the-example)
@@ -70,6 +73,11 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
     </application>
 </manifest>
 ```
+
+## Apple Watch Setup
+
+See [docs/applewatch-setup.md](docs/applewatch-setup.md) for instructions on
+setting up Xcode, required entitlements, and pairing a watch app.
 
 ## React Native API Documentation
 
