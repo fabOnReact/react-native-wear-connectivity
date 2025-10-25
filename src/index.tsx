@@ -38,6 +38,7 @@ const startFileTransfer: SendFile = (file, _metadata) => {
 };
 
 export { startFileTransfer, sendMessage, watchEvents, WearConnectivity };
+export { default as GarminConnector } from './garmin/GarminConnector';
 export type { ReplyCallback, ErrorCallback };
 
 type WearParameters = {
