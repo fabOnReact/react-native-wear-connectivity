@@ -2,6 +2,13 @@ import { AppRegistry } from 'react-native';
 import { NativeModules, Platform } from 'react-native';
 import { watchEvents } from './subscriptions';
 import { sendMessage } from './messages';
+// Re-export shared interfaces and device connectors
+export * from './core';
+export * from './garmin';
+export * from './miband';
+export * from './huawei';
+export * from './wearos';
+export * from './applewatch';
 import type {
   ReplyCallback,
   ErrorCallback,
