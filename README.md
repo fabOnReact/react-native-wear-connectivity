@@ -14,6 +14,7 @@ Allows you to connect React Native Mobile apps with WearOS.
 # Table of Contents
 
 - [Installation](#installation)
+- [Mi Band Setup](#mi-band-setup)
 - [React Native API Documentation](#react-native-api-documentation)
 - [Jetpack Compose API Documentation](#jetpack-compose-api-documentation)
 - [How to run the example](#how-to-run-the-example)
@@ -70,6 +71,15 @@ Add the following entry to your `android/app/src/main/AndroidManifest.xml` (full
     </application>
 </manifest>
 ```
+
+## Mi Band Setup
+
+To use a Mi Band with this library the band must first be paired with the
+Android device through the official **Mi Fitness** (or **Zepp Life**)
+application. Ensure Bluetooth is enabled and grant the app the required
+permissions such as `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN` and
+`ACCESS_FINE_LOCATION`. More details are available in
+[docs/miband.md](docs/miband.md).
 
 ## React Native API Documentation
 

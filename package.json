@@ -85,6 +85,9 @@
     "react": "*",
     "react-native": "*"
   },
+  "dependencies": {
+    "rn-miband-connector": "^0.1.0"
+  },
   "workspaces": [
     "example",
     "watch-example"
